@@ -44,6 +44,9 @@ const data = {
     },
   ],
   albums: [],
+  favoritesArtists: ['30397502-11fc-474e-b9be-f408b9c59f3d'],
+  favoritesAlbums: [],
+  favoritesTracks: ['30397502-11fc-474e-b9be-f408b9c59f3d'],
 };
 
 @Injectable()
@@ -53,12 +56,18 @@ export class DbService {
     this.artists = data.artists;
     this.tracks = data.tracks;
     this.albums = data.albums;
+    this.favoritesArtists = data.favoritesArtists;
+    this.favoritesAlbums = data.favoritesAlbums;
+    this.favoritesTracks = data.favoritesTracks;
   }
 
   private users: User[];
   private artists: Artist[];
   private tracks: Track[];
   private albums: Album[];
+  private favoritesArtists: string[];
+  private favoritesAlbums: string[];
+  private favoritesTracks: string[];
 
   // USER
   userGetAll() {
@@ -335,5 +344,22 @@ export class DbService {
         album.artistId = null;
       }
     });
+  }
+
+  // FAVORITES
+  favoritesGetAll() {
+    const artistsIds = this.favoritesArtists;
+    const albumsIds = this.favoritesAlbums;
+    const tracksIds = this.favoritesTracks;
+
+    const artists = artistsIds.map((artistsId) => this.artistGetOne(artistsId));
+    const albums = albumsIds.map((albumsId) => this.albumGetOne(albumsId));
+    const tracks = tracksIds.map((tracksId) => this.trackGetOne(tracksId));
+
+    return {
+      artists,
+      albums,
+      tracks,
+    };
   }
 }

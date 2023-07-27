@@ -7,6 +7,7 @@ import { UserModule } from './api/user/user.module';
 import { ArtistModule } from './api/artist/artist.module';
 import { TrackModule } from './api/track/track.module';
 import { AlbumModule } from './api/album/album.module';
+import { FavoritesModule } from './api/favorites/favorites.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AlbumModule } from './api/album/album.module';
     ArtistModule,
     TrackModule,
     AlbumModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
