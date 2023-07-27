@@ -6,17 +6,10 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
+
 import { UUIDParam } from 'src/utils/id';
-import {
-  AlbumNotFavoriteException,
-  AlbumNotFoundException,
-  ArtistNotFavoriteException,
-  ArtistNotFoundException,
-  FavoritesException,
-  TrackNotFavoriteException,
-  TrackNotFoundException,
-} from './favorites.exceptions';
+import { FavoritesService } from './favorites.service';
+import { FavoritesException } from './favorites.exceptions';
 
 @Controller('favs')
 export class FavoritesController {

@@ -8,8 +8,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { TrackService } from './track.service';
+
 import { UUIDParam } from 'src/utils/id';
+import { TrackService } from './track.service';
 import { TrackNotFoundException } from './track.exceptions';
 import { CreateTrackDto, UpdateTrackDto } from './dto';
 

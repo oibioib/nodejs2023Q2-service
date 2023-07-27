@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 
 import { UUIDParam } from 'src/utils/id';
-import { CreateAlbumDto, UpdateAlbumDto } from './dto';
 import { AlbumService } from './album.service';
 import { AlbumNotFoundException } from './album.exceptions';
+import { CreateAlbumDto, UpdateAlbumDto } from './dto';
 
 @Controller('album')
 export class AlbumController {

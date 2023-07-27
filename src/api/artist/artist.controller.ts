@@ -8,8 +8,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ArtistService } from './artist.service';
+
 import { UUIDParam } from 'src/utils/id';
+import { ArtistService } from './artist.service';
 import { ArtistNotFoundException } from './artist.exceptions';
 import { CreateArtistDto, UpdateArtistDto } from './dto';
 
