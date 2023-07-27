@@ -8,4 +8,28 @@ export class FavoritesService {
   readAll() {
     return this.db.favoritesGetAll();
   }
+
+  addFavoriteTrack(id: string) {
+    return this.db.favoritesAddTrack(id);
+  }
+
+  addFavoriteAlbum(id: string) {
+    return this.db.favoritesAddAlbum(id);
+  }
+
+  addFavoriteArtist(id: string) {
+    return this.db.favoritesAddArtist(id);
+  }
+
+  deleteFavoriteTrack(id: string) {
+    return this.db.favoritesDeleteTrack(id);
+  }
+
+  deleteFavoriteAlbum(id: string) {
+    return this.db.favoritesDeleteAlbum(id);
+  }
+
+  deleteFavoriteArtist(id: string) {
+    return this.db.favoritesDeleteArtist(id);
+  }
 }

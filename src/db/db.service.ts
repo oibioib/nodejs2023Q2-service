@@ -17,36 +17,13 @@ import { Album } from 'src/api/album/entities/album.entity';
 import { CreateAlbumDto, UpdateAlbumDto } from 'src/api/album/dto';
 
 const data = {
-  users: [
-    {
-      id: '30397502-11fc-474e-b9be-f408b9c59f3d',
-      login: 'login',
-      password: 'password',
-      version: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ],
-  artists: [
-    {
-      id: '30397502-11fc-474e-b9be-f408b9c59f3d',
-      name: 'Artist',
-      grammy: true,
-    },
-  ],
-  tracks: [
-    {
-      id: '30397502-11fc-474e-b9be-f408b9c59f3d',
-      name: 'Track',
-      artistId: null,
-      albumId: null,
-      duration: 123,
-    },
-  ],
+  users: [],
+  artists: [],
+  tracks: [],
   albums: [],
-  favoritesArtists: ['30397502-11fc-474e-b9be-f408b9c59f3d'],
+  favoritesArtists: [],
   favoritesAlbums: [],
-  favoritesTracks: ['30397502-11fc-474e-b9be-f408b9c59f3d'],
+  favoritesTracks: [],
 };
 
 @Injectable()
@@ -200,6 +177,7 @@ export class DbService {
       this.artists.splice(artistIndex, 1);
       this._tracksDeleteArtist(id);
       this._albumsDeleteArtist(id);
+      this._favoritesDeleteArtist(id);
     }
   }
 
@@ -259,6 +237,7 @@ export class DbService {
 
     if (trackIndex >= 0) {
       this.tracks.splice(trackIndex, 1);
+      this._favoritesDeleteTrack(id);
     }
   }
 
@@ -335,6 +314,7 @@ export class DbService {
     if (albumIndex >= 0) {
       this.albums.splice(albumIndex, 1);
       this._tracksDeleteAlbum(id);
+      this._favoritesDeleteAlbum(id);
     }
   }
 
@@ -361,5 +341,128 @@ export class DbService {
       albums,
       tracks,
     };
+  }
+
+  favoritesAddTrack(id: string) {
+    const trackIndex = this.tracks.findIndex((track) => track.id === id);
+
+    if (trackIndex === -1) {
+      return {
+        error: HttpStatus.UNPROCESSABLE_ENTITY,
+      };
+    }
+
+    if (trackIndex >= 0) {
+      this.favoritesTracks.push(id);
+      return id;
+    }
+  }
+
+  favoritesAddAlbum(id: string) {
+    const albumIndex = this.albums.findIndex((album) => album.id === id);
+
+    if (albumIndex === -1) {
+      return {
+        error: HttpStatus.UNPROCESSABLE_ENTITY,
+      };
+    }
+
+    if (albumIndex >= 0) {
+      this.favoritesAlbums.push(id);
+      return id;
+    }
+  }
+
+  favoritesAddArtist(id: string) {
+    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
+
+    if (artistIndex === -1) {
+      return {
+        error: HttpStatus.UNPROCESSABLE_ENTITY,
+      };
+    }
+
+    if (artistIndex >= 0) {
+      this.favoritesArtists.push(id);
+      return id;
+    }
+  }
+
+  favoritesDeleteTrack(id: string) {
+    const favoriteTrackIndex = this.favoritesTracks.findIndex(
+      (favoritesTrack) => favoritesTrack === id,
+    );
+
+    if (favoriteTrackIndex === -1) {
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (favoriteTrackIndex >= 0) {
+      this.favoritesTracks.splice(favoriteTrackIndex, 1);
+    }
+  }
+
+  favoritesDeleteAlbum(id: string) {
+    const favoriteAlbumIndex = this.favoritesAlbums.findIndex(
+      (favoritesAlbum) => favoritesAlbum === id,
+    );
+
+    if (favoriteAlbumIndex === -1) {
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (favoriteAlbumIndex >= 0) {
+      this.favoritesAlbums.splice(favoriteAlbumIndex, 1);
+    }
+  }
+
+  favoritesDeleteArtist(id: string) {
+    const favoriteArtistIndex = this.favoritesArtists.findIndex(
+      (favoritesArtist) => favoritesArtist === id,
+    );
+
+    if (favoriteArtistIndex === -1) {
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (favoriteArtistIndex >= 0) {
+      this.favoritesArtists.splice(favoriteArtistIndex, 1);
+    }
+  }
+
+  _favoritesDeleteTrack(id: string) {
+    const favoriteTrackIndex = this.favoritesTracks.findIndex(
+      (favoritesTrack) => favoritesTrack === id,
+    );
+
+    if (favoriteTrackIndex >= 0) {
+      this.favoritesTracks.splice(favoriteTrackIndex, 1);
+    }
+  }
+
+  _favoritesDeleteAlbum(id: string) {
+    const favoriteAlbumIndex = this.favoritesAlbums.findIndex(
+      (favoritesAlbum) => favoritesAlbum === id,
+    );
+
+    if (favoriteAlbumIndex >= 0) {
+      this.favoritesAlbums.splice(favoriteAlbumIndex, 1);
+    }
+  }
+
+  _favoritesDeleteArtist(id: string) {
+    const favoriteArtistIndex = this.favoritesArtists.findIndex(
+      (favoritesArtist) => favoritesArtist === id,
+    );
+
+    if (favoriteArtistIndex >= 0) {
+      this.favoritesArtists.splice(favoriteArtistIndex, 1);
+    }
   }
 }
