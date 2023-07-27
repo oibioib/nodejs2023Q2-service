@@ -13,6 +13,7 @@ import {
   AlbumNotFoundException,
   ArtistNotFavoriteException,
   ArtistNotFoundException,
+  FavoritesException,
   TrackNotFavoriteException,
   TrackNotFoundException,
 } from './favorites.exceptions';
@@ -44,7 +45,11 @@ export class FavoritesController {
       'error' in data &&
       data.error === HttpStatus.UNPROCESSABLE_ENTITY
     )
-      throw new TrackNotFoundException(id);
+      throw new FavoritesException(
+        'Track',
+        id,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
   }
 
   @Post('album/:id')
@@ -65,7 +70,11 @@ export class FavoritesController {
       'error' in data &&
       data.error === HttpStatus.UNPROCESSABLE_ENTITY
     )
-      throw new AlbumNotFoundException(id);
+      throw new FavoritesException(
+        'Album',
+        id,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
   }
 
   @Post('artist/:id')
@@ -86,7 +95,11 @@ export class FavoritesController {
       'error' in data &&
       data.error === HttpStatus.UNPROCESSABLE_ENTITY
     )
-      throw new ArtistNotFoundException(id);
+      throw new FavoritesException(
+        'Artist',
+        id,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
   }
 
   @Delete('track/:id')
@@ -95,7 +108,7 @@ export class FavoritesController {
     const data = this.favoritesService.deleteFavoriteTrack(id);
 
     if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
-      throw new TrackNotFavoriteException(id);
+      throw new FavoritesException('Track', id, HttpStatus.NOT_FOUND);
   }
 
   @Delete('album/:id')
@@ -104,7 +117,7 @@ export class FavoritesController {
     const data = this.favoritesService.deleteFavoriteAlbum(id);
 
     if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
-      throw new AlbumNotFavoriteException(id);
+      throw new FavoritesException('Album', id, HttpStatus.NOT_FOUND);
   }
 
   @Delete('artist/:id')
@@ -113,6 +126,6 @@ export class FavoritesController {
     const data = this.favoritesService.deleteFavoriteArtist(id);
 
     if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
-      throw new ArtistNotFavoriteException(id);
+      throw new FavoritesException('Artist', id, HttpStatus.NOT_FOUND);
   }
 }
