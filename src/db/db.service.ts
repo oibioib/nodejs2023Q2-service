@@ -189,6 +189,8 @@ export class DbService {
 
     if (artistIndex >= 0) {
       this.artists.splice(artistIndex, 1);
+      this._tracksDeleteArtist(id);
+      this._albumsDeleteArtist(id);
     }
   }
 
@@ -251,6 +253,22 @@ export class DbService {
     }
   }
 
+  _tracksDeleteArtist(artistId: string) {
+    this.tracks.forEach((track) => {
+      if (track.artistId === artistId) {
+        track.artistId = null;
+      }
+    });
+  }
+
+  _tracksDeleteAlbum(albumId: string) {
+    this.tracks.forEach((track) => {
+      if (track.albumId === albumId) {
+        track.albumId = null;
+      }
+    });
+  }
+
   // ALBUM
   albumGetAll() {
     return this.albums;
@@ -306,7 +324,16 @@ export class DbService {
     }
 
     if (albumIndex >= 0) {
-      this.tracks.splice(albumIndex, 1);
+      this.albums.splice(albumIndex, 1);
+      this._tracksDeleteAlbum(id);
     }
+  }
+
+  _albumsDeleteArtist(artistId: string) {
+    this.albums.forEach((album) => {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+    });
   }
 }
