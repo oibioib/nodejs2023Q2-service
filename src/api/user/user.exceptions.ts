@@ -5,6 +5,7 @@ export class UserNotFoundException extends HttpException {
     super('User not found', HttpStatus.NOT_FOUND);
   }
 }
+
 export class InvalidPasswordException extends HttpException {
   constructor() {
     super('Invalid password', HttpStatus.FORBIDDEN);

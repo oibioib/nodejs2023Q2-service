@@ -1,6 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto, UpdateArtistDto } from 'src/api/artist/dto';
 import { Artist } from 'src/api/artist/entities/artist.entity';
+import { CreateTrackDto, UpdateTrackDto } from 'src/api/track/dto';
+import { Track } from 'src/api/track/entities/track.entity';
 import { CreateUserDto, UpdatePasswordDto } from 'src/api/user/dto';
 import { User } from 'src/api/user/entities/user.entity';
 import { getDate } from 'src/utils/date';
@@ -25,6 +27,15 @@ const data = {
       grammy: true,
     },
   ],
+  tracks: [
+    {
+      id: '30397502-11fc-474e-b9be-f408b9c59f3d',
+      name: 'Track',
+      artistId: null,
+      albumId: null,
+      duration: 123,
+    },
+  ],
 };
 
 @Injectable()
@@ -32,10 +43,12 @@ export class DbService {
   constructor() {
     this.users = data.users;
     this.artists = data.artists;
+    this.tracks = data.tracks;
   }
 
   private users: User[];
   private artists: Artist[];
+  private tracks: Track[];
 
   // USER
   userGetAll() {
@@ -166,6 +179,65 @@ export class DbService {
 
     if (artistIndex >= 0) {
       this.artists.splice(artistIndex, 1);
+    }
+  }
+
+  // TRACK
+  trackGetAll() {
+    return this.tracks;
+  }
+
+  trackGetOne(id: string) {
+    const existingTrack = this.tracks.find((track) => track.id === id);
+
+    if (!existingTrack)
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+
+    return existingTrack;
+  }
+
+  trackCreate(createTrackDto: CreateTrackDto) {
+    const newTrack: Track = {
+      id: generateId(),
+      ...createTrackDto,
+    };
+
+    this.tracks.push(newTrack);
+
+    return newTrack;
+  }
+
+  trackUpdate(id: string, updateTrackDto: UpdateTrackDto) {
+    const trackIndex = this.tracks.findIndex((track) => track.id === id);
+
+    if (trackIndex === -1)
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+
+    const trackWithNewData = {
+      ...this.tracks[trackIndex],
+      ...updateTrackDto,
+    };
+
+    this.tracks[trackIndex] = trackWithNewData;
+
+    return trackWithNewData;
+  }
+
+  trackDelete(id: string) {
+    const trackIndex = this.tracks.findIndex((track) => track.id === id);
+
+    if (trackIndex === -1) {
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (trackIndex >= 0) {
+      this.tracks.splice(trackIndex, 1);
     }
   }
 }
