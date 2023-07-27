@@ -1,13 +1,20 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateArtistDto, UpdateArtistDto } from 'src/api/artist/dto';
-import { Artist } from 'src/api/artist/entities/artist.entity';
-import { CreateTrackDto, UpdateTrackDto } from 'src/api/track/dto';
-import { Track } from 'src/api/track/entities/track.entity';
-import { CreateUserDto, UpdatePasswordDto } from 'src/api/user/dto';
-import { User } from 'src/api/user/entities/user.entity';
+
 import { getDate } from 'src/utils/date';
 import { generateId } from 'src/utils/id';
 import { getUserToResponse } from 'src/utils/user';
+
+import { Artist } from 'src/api/artist/entities/artist.entity';
+import { CreateArtistDto, UpdateArtistDto } from 'src/api/artist/dto';
+
+import { Track } from 'src/api/track/entities/track.entity';
+import { CreateTrackDto, UpdateTrackDto } from 'src/api/track/dto';
+
+import { User } from 'src/api/user/entities/user.entity';
+import { CreateUserDto, UpdatePasswordDto } from 'src/api/user/dto';
+
+import { Album } from 'src/api/album/entities/album.entity';
+import { CreateAlbumDto, UpdateAlbumDto } from 'src/api/album/dto';
 
 const data = {
   users: [
@@ -36,6 +43,7 @@ const data = {
       duration: 123,
     },
   ],
+  albums: [],
 };
 
 @Injectable()
@@ -44,11 +52,13 @@ export class DbService {
     this.users = data.users;
     this.artists = data.artists;
     this.tracks = data.tracks;
+    this.albums = data.albums;
   }
 
   private users: User[];
   private artists: Artist[];
   private tracks: Track[];
+  private albums: Album[];
 
   // USER
   userGetAll() {
@@ -238,6 +248,65 @@ export class DbService {
 
     if (trackIndex >= 0) {
       this.tracks.splice(trackIndex, 1);
+    }
+  }
+
+  // ALBUM
+  albumGetAll() {
+    return this.albums;
+  }
+
+  albumGetOne(id: string) {
+    const existingAlbum = this.albums.find((album) => album.id === id);
+
+    if (!existingAlbum)
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+
+    return existingAlbum;
+  }
+
+  albumCreate(createAlbumDto: CreateAlbumDto) {
+    const newAlbum: Album = {
+      id: generateId(),
+      ...createAlbumDto,
+    };
+
+    this.albums.push(newAlbum);
+
+    return newAlbum;
+  }
+
+  albumUpdate(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const albumIndex = this.albums.findIndex((album) => album.id === id);
+
+    if (albumIndex === -1)
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+
+    const albumWithNewData = {
+      ...this.albums[albumIndex],
+      ...updateAlbumDto,
+    };
+
+    this.albums[albumIndex] = albumWithNewData;
+
+    return albumWithNewData;
+  }
+
+  albumDelete(id: string) {
+    const albumIndex = this.albums.findIndex((album) => album.id === id);
+
+    if (albumIndex === -1) {
+      return {
+        error: HttpStatus.NOT_FOUND,
+      };
+    }
+
+    if (albumIndex >= 0) {
+      this.tracks.splice(albumIndex, 1);
     }
   }
 }
