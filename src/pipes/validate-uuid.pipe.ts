@@ -10,7 +10,10 @@ import { validate } from 'uuid';
 export class ValidateUUIDPipe implements PipeTransform {
   transform(id: string) {
     if (!validate(id)) {
-      throw new HttpException('Invalid UUID', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Bad request. Id is invalid (not uuid).',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return id;
   }
