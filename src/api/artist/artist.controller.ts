@@ -31,18 +31,17 @@ export class ArtistController {
   @Get()
   @SwaggerGetAllArtists()
   readAll() {
-    return this.artistService.readAll();
+    const { data } = this.artistService.readAll();
+    return data;
   }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetArtist()
   readOne(@UUIDParam('id') id: string) {
-    const data = this.artistService.readOne(id);
+    const { data, errorCode } = this.artistService.readOne(id);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new ArtistNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
 
     return data;
   }
@@ -51,7 +50,8 @@ export class ArtistController {
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostArtist()
   createOne(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+    const { data } = this.artistService.create(createArtistDto);
+    return data;
   }
 
   @Put(':id')
@@ -61,12 +61,9 @@ export class ArtistController {
     @UUIDParam('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const data = this.artistService.update(id, updateArtistDto);
+    const { data, errorCode } = this.artistService.update(id, updateArtistDto);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new ArtistNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
 
     return data;
   }
@@ -75,11 +72,8 @@ export class ArtistController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteArtist()
   deleteOne(@UUIDParam('id') id: string) {
-    const data = this.artistService.delete(id);
+    const { errorCode } = this.artistService.delete(id);
 
-    if (data && 'error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new ArtistNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
   }
 }

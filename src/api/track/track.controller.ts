@@ -31,19 +31,17 @@ export class TrackController {
   @Get()
   @SwaggerGetAllTracks()
   readAll() {
-    return this.trackService.readAll();
+    const { data } = this.trackService.readAll();
+    return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetTrack()
   readOne(@UUIDParam('id') id: string) {
-    const data = this.trackService.readOne(id);
+    const { data, errorCode } = this.trackService.readOne(id);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new TrackNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
 
     return data;
   }
@@ -52,7 +50,8 @@ export class TrackController {
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostTrack()
   createOne(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+    const { data } = this.trackService.create(createTrackDto);
+    return data;
   }
 
   @Put(':id')
@@ -62,12 +61,9 @@ export class TrackController {
     @UUIDParam('id') id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    const data = this.trackService.update(id, updateTrackDto);
+    const { data, errorCode } = this.trackService.update(id, updateTrackDto);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new TrackNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
 
     return data;
   }
@@ -76,11 +72,8 @@ export class TrackController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteTrack()
   deleteOne(@UUIDParam('id') id: string) {
-    const data = this.trackService.delete(id);
+    const { errorCode } = this.trackService.delete(id);
 
-    if (data && 'error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new TrackNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
   }
 }

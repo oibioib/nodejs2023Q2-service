@@ -26,14 +26,15 @@ export class FavoritesController {
   @Get()
   @SwaggerGetAllFavorites()
   readAll() {
-    return this.favoritesService.readAll();
+    const { data } = this.favoritesService.readAll();
+    return data;
   }
 
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Track')
   addTrack(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.addFavoriteTrack(id);
+    const { data, errorCode } = this.favoritesService.addFavoriteTrack(id);
 
     if (data === id) {
       return {
@@ -42,12 +43,7 @@ export class FavoritesController {
       };
     }
 
-    if (
-      data &&
-      typeof data !== 'string' &&
-      'error' in data &&
-      data.error === HttpStatus.UNPROCESSABLE_ENTITY
-    )
+    if (errorCode === HttpStatus.UNPROCESSABLE_ENTITY)
       throw new FavoritesException(
         'Track',
         id,
@@ -59,7 +55,7 @@ export class FavoritesController {
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Album')
   addAlbum(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.addFavoriteAlbum(id);
+    const { data, errorCode } = this.favoritesService.addFavoriteAlbum(id);
 
     if (data === id) {
       return {
@@ -68,12 +64,7 @@ export class FavoritesController {
       };
     }
 
-    if (
-      data &&
-      typeof data !== 'string' &&
-      'error' in data &&
-      data.error === HttpStatus.UNPROCESSABLE_ENTITY
-    )
+    if (errorCode === HttpStatus.UNPROCESSABLE_ENTITY)
       throw new FavoritesException(
         'Album',
         id,
@@ -85,7 +76,7 @@ export class FavoritesController {
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Artist')
   addArtist(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.addFavoriteArtist(id);
+    const { data, errorCode } = this.favoritesService.addFavoriteArtist(id);
 
     if (data === id) {
       return {
@@ -94,12 +85,7 @@ export class FavoritesController {
       };
     }
 
-    if (
-      data &&
-      typeof data !== 'string' &&
-      'error' in data &&
-      data.error === HttpStatus.UNPROCESSABLE_ENTITY
-    )
+    if (errorCode === HttpStatus.UNPROCESSABLE_ENTITY)
       throw new FavoritesException(
         'Artist',
         id,
@@ -111,9 +97,9 @@ export class FavoritesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Track')
   deleteTrack(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.deleteFavoriteTrack(id);
+    const { errorCode } = this.favoritesService.deleteFavoriteTrack(id);
 
-    if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
+    if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Track', id, HttpStatus.NOT_FOUND);
   }
 
@@ -121,9 +107,9 @@ export class FavoritesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Album')
   deleteAlbum(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.deleteFavoriteAlbum(id);
+    const { errorCode } = this.favoritesService.deleteFavoriteAlbum(id);
 
-    if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
+    if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Album', id, HttpStatus.NOT_FOUND);
   }
 
@@ -131,9 +117,9 @@ export class FavoritesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Artist')
   deleteArtist(@UUIDParam('id') id: string) {
-    const data = this.favoritesService.deleteFavoriteArtist(id);
+    const { errorCode } = this.favoritesService.deleteFavoriteArtist(id);
 
-    if (data && 'error' in data && data.error === HttpStatus.NOT_FOUND)
+    if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Artist', id, HttpStatus.NOT_FOUND);
   }
 }

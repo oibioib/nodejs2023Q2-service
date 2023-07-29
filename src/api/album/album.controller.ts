@@ -31,19 +31,17 @@ export class AlbumController {
   @Get()
   @SwaggerGetAllAlbums()
   readAll() {
-    return this.albumService.readAll();
+    const { data } = this.albumService.readAll();
+    return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetAlbum()
   readOne(@UUIDParam('id') id: string) {
-    const data = this.albumService.readOne(id);
+    const { data, errorCode } = this.albumService.readOne(id);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new AlbumNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
 
     return data;
   }
@@ -52,7 +50,8 @@ export class AlbumController {
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostAlbum()
   createOne(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+    const { data } = this.albumService.create(createAlbumDto);
+    return data;
   }
 
   @Put(':id')
@@ -62,12 +61,9 @@ export class AlbumController {
     @UUIDParam('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    const data = this.albumService.update(id, updateAlbumDto);
+    const { data, errorCode } = this.albumService.update(id, updateAlbumDto);
 
-    if ('error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new AlbumNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
 
     return data;
   }
@@ -76,11 +72,8 @@ export class AlbumController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteAlbum()
   deleteOne(@UUIDParam('id') id: string) {
-    const data = this.albumService.delete(id);
+    const { errorCode } = this.albumService.delete(id);
 
-    if (data && 'error' in data) {
-      if (data.error === HttpStatus.NOT_FOUND)
-        throw new AlbumNotFoundException();
-    }
+    if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
   }
 }
