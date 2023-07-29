@@ -1,41 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-const DEFAULT_APP_PORT = 4000;
+import { getAppPort } from './config/app.config';
+import { createSwaggerSchema } from './config/swagger.config';
+import { AppValidationPipe } from './config/validate.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      exceptionFactory: (errors) => {
-        const errorProperties = errors
-          .map((error) => error.property)
-          .join(', ');
-
-        return new HttpException(
-          `Bad request. Body does not contain required fields: [ ${errorProperties} ].`,
-          HttpStatus.BAD_REQUEST,
-        );
-      },
-    }),
-  );
-  const configService: ConfigService = app.get<ConfigService>(ConfigService);
-  const port = configService.get('PORT') || DEFAULT_APP_PORT;
-
-  const config = new DocumentBuilder()
-    .setTitle('Node.js Home Library Service')
-    .setVersion('1.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-
-  SwaggerModule.setup('doc', app, document);
-
+  app.useGlobalPipes(AppValidationPipe);
+  const port = getAppPort(app);
+  createSwaggerSchema(app);
   await app.listen(port);
 }
 
