@@ -2,11 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
-import {
-  DocumentBuilder,
-  SwaggerDocumentOptions,
-  SwaggerModule,
-} from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const DEFAULT_APP_PORT = 4000;
 
@@ -36,11 +32,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  const options: SwaggerDocumentOptions = {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  };
-
-  const document = SwaggerModule.createDocument(app, config, options);
+  const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('doc', app, document);
 

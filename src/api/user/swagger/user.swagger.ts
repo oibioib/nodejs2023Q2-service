@@ -19,10 +19,10 @@ export const SwaggerGetAllUsers = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Get all users.',
-      description: 'Get all users.',
+      description: 'Gets all users.',
     }),
     ApiOkResponse({
-      description: 'Successful operation',
+      description: 'Successful operation.',
       type: User,
     }),
   );
@@ -32,7 +32,7 @@ export const SwaggerGetUser = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Get single user.',
-      description: 'Get single user by ID (uuid).',
+      description: 'Gets single user by ID (uuid).',
     }),
     ApiOkResponse({
       description: 'Successful operation.',
@@ -42,7 +42,7 @@ export const SwaggerGetUser = () => {
       description: 'Bad request. Id is invalid (not uuid).',
     }),
     ApiNotFoundResponse({
-      description: 'User not found',
+      description: 'User not found.',
     }),
   );
 };
@@ -50,7 +50,7 @@ export const SwaggerGetUser = () => {
 export const SwaggerPostUser = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Creates a new user.',
+      summary: 'Create a new user.',
       description: 'Creates a new user.',
     }),
     ApiCreatedResponse({
@@ -68,7 +68,7 @@ export const SwaggerPutUser = () => {
   return applyDecorators(
     ApiOperation({
       summary: "Update user's password.",
-      description: "Update user's password by ID (uuid).",
+      description: "Updates user's password by ID (uuid).",
     }),
     ApiOkResponse({
       description: 'The user has been updated.',

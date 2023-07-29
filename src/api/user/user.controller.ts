@@ -25,8 +25,8 @@ import {
   SwaggerDeleteUser,
 } from './swagger/user.swagger';
 
-@SwaggerUserEndpoint()
 @Controller('user')
+@SwaggerUserEndpoint()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
