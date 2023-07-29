@@ -7,21 +7,31 @@ import {
   Post,
 } from '@nestjs/common';
 
+import {
+  SwaggerFavoritesEndpoint,
+  SwaggerGetAllFavorites,
+  SwaggerAddEntityToFavorites,
+  SwaggerDeleteEntityFromFavorites,
+} from './swagger/favorites.swagger';
+
 import { UUIDParam } from 'src/utils/id';
 import { FavoritesService } from './favorites.service';
 import { FavoritesException } from './favorites.exceptions';
 
 @Controller('favs')
+@SwaggerFavoritesEndpoint()
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
+  @SwaggerGetAllFavorites()
   readAll() {
     return this.favoritesService.readAll();
   }
 
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
+  @SwaggerAddEntityToFavorites('Track')
   addTrack(@UUIDParam('id') id: string) {
     const data = this.favoritesService.addFavoriteTrack(id);
 
@@ -47,6 +57,7 @@ export class FavoritesController {
 
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
+  @SwaggerAddEntityToFavorites('Album')
   addAlbum(@UUIDParam('id') id: string) {
     const data = this.favoritesService.addFavoriteAlbum(id);
 
@@ -72,6 +83,7 @@ export class FavoritesController {
 
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
+  @SwaggerAddEntityToFavorites('Artist')
   addArtist(@UUIDParam('id') id: string) {
     const data = this.favoritesService.addFavoriteArtist(id);
 
@@ -97,6 +109,7 @@ export class FavoritesController {
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @SwaggerDeleteEntityFromFavorites('Track')
   deleteTrack(@UUIDParam('id') id: string) {
     const data = this.favoritesService.deleteFavoriteTrack(id);
 
@@ -106,6 +119,7 @@ export class FavoritesController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @SwaggerDeleteEntityFromFavorites('Album')
   deleteAlbum(@UUIDParam('id') id: string) {
     const data = this.favoritesService.deleteFavoriteAlbum(id);
 
@@ -115,6 +129,7 @@ export class FavoritesController {
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @SwaggerDeleteEntityFromFavorites('Artist')
   deleteArtist(@UUIDParam('id') id: string) {
     const data = this.favoritesService.deleteFavoriteArtist(id);
 
