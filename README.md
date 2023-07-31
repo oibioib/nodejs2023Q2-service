@@ -1,20 +1,30 @@
-# Home Library Service
+# Node.js Home Library Service
 
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-## Downloading
+## To run the app, please run the following:
 
 ```
-git clone {repository URL}
+git clone git@github.com:oibioib/nodejs2023Q2-service.git
 ```
 
-## Installing NPM modules
+```
+cd nodejs2023Q2-service
+```
+
+```
+git checkout develop
+```
 
 ```
 npm install
+```
+
+```
+Create .env file (based on .env.example): ./.env
 ```
 
 ## Running application
@@ -23,9 +33,12 @@ npm install
 npm start
 ```
 
+## OpenAPI documentation
+
 After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+in your browser OpenAPI documentation by typing http://localhost:4000/doc .
+
+Documentation also available in `yaml` http://localhost:4000/doc-yaml and `json` http://localhost:4000/doc-json .
 
 ## Testing
 
@@ -64,9 +77,3 @@ npm run lint
 ```
 npm run format
 ```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
