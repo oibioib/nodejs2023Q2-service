@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { getAppPort } from './config/app.config';
 import { createSwaggerSchema } from './config/swagger.config';
 import { AppValidationPipe } from './config/validate.config';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +11,7 @@ async function bootstrap() {
   const port = getAppPort(app);
   createSwaggerSchema(app);
   await app.listen(port);
+  Logger.log(`Nest application starts on port: ${port}!`, 'Info');
 }
 
 bootstrap();
