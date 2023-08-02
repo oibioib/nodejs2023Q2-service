@@ -30,16 +30,16 @@ export class AlbumController {
 
   @Get()
   @SwaggerGetAllAlbums()
-  readAll() {
-    const { data } = this.albumService.readAll();
+  async readAll() {
+    const { data } = await this.albumService.readAll();
     return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetAlbum()
-  readOne(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.albumService.readOne(id);
+  async readOne(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.albumService.readOne(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
 
@@ -49,19 +49,22 @@ export class AlbumController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostAlbum()
-  createOne(@Body() createAlbumDto: CreateAlbumDto) {
-    const { data } = this.albumService.create(createAlbumDto);
+  async createOne(@Body() createAlbumDto: CreateAlbumDto) {
+    const { data } = await this.albumService.create(createAlbumDto);
     return data;
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerPutAlbum()
-  updateOne(
+  async updateOne(
     @UUIDParam('id') id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    const { data, errorCode } = this.albumService.update(id, updateAlbumDto);
+    const { data, errorCode } = await this.albumService.update(
+      id,
+      updateAlbumDto,
+    );
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
 
@@ -71,8 +74,8 @@ export class AlbumController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteAlbum()
-  deleteOne(@UUIDParam('id') id: string) {
-    const { errorCode } = this.albumService.delete(id);
+  async deleteOne(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.albumService.delete(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new AlbumNotFoundException();
   }

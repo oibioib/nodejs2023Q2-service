@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Album {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -8,18 +11,25 @@ export class Album {
   })
   id: string;
 
+  @Column()
   @ApiProperty({
     type: 'string',
     example: 'Innuendo',
   })
   name: string;
 
+  @Column()
   @ApiProperty({
     type: 'number',
     example: 1991,
   })
   year: number;
 
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: null,
+  })
   @ApiProperty({
     type: 'string',
     format: 'uuid',
