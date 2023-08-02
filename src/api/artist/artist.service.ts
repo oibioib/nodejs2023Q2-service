@@ -87,7 +87,7 @@ export class ArtistService {
     }
 
     if (existingArtist) {
-      this.artistRepository.remove(existingArtist);
+      await this.artistRepository.remove(existingArtist);
     }
 
     return dbResponse;

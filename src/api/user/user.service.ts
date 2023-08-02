@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
-import { DbService } from 'src/db/db.service';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
@@ -12,8 +11,6 @@ import { getUserToResponse } from 'src/utils/user';
 @Injectable()
 export class UserService {
   constructor(
-    private db: DbService,
-
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -105,7 +102,7 @@ export class UserService {
     }
 
     if (existingUser) {
-      this.userRepository.remove(existingUser);
+      await this.userRepository.remove(existingUser);
     }
 
     return dbResponse;

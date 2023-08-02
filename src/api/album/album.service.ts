@@ -86,7 +86,7 @@ export class AlbumService {
     }
 
     if (existingAlbum) {
-      this.albumRepository.remove(existingAlbum);
+      await this.albumRepository.remove(existingAlbum);
     }
     return dbResponse;
   }
