@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Album } from 'src/api/album/entities/album.entity';
+import { Artist } from 'src/api/artist/entities/artist.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Track {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -8,12 +13,18 @@ export class Track {
   })
   id: string;
 
+  @Column()
   @ApiProperty({
     type: 'string',
     example: 'The Show Must Go On',
   })
   name: string;
 
+  @Column({
+    type: 'uuid',
+    nullable: true,
+    default: null,
+  })
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -22,6 +33,11 @@ export class Track {
   })
   artistId: string | null;
 
+  @Column({
+    type: 'uuid',
+    nullable: true,
+    default: null,
+  })
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -30,9 +46,16 @@ export class Track {
   })
   albumId: string | null;
 
+  @Column()
   @ApiProperty({
     type: 'number',
     example: 262,
   })
   duration: number;
+
+  @ManyToOne(() => Artist, (artist) => artist.tracks, { onDelete: 'SET NULL' })
+  artist: Artist;
+
+  @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'SET NULL' })
+  album: Album;
 }
