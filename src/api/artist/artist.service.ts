@@ -1,29 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
-import { DbService } from 'src/db/db.service';
 import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './entities/artist.entity';
+import { Repository } from 'typeorm';
+import { DBResponse } from 'src/db/response/db-response';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DbService) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) {}
 
-  readAll() {
-    return this.db.artistGetAll();
+  async readAll() {
+    const dbResponse = new DBResponse<Artist[]>();
+    const artists = await this.artistRepository.find();
+    dbResponse.data = artists;
+
+    return dbResponse;
   }
 
-  readOne(id: string) {
-    return this.db.artistGetOne(id);
+  async readOne(id: string) {
+    const dbResponse = new DBResponse<Artist>();
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      return dbResponse;
+    }
+
+    dbResponse.data = existingArtist;
+
+    return dbResponse;
   }
 
-  create(createArtistDto: CreateArtistDto) {
-    return this.db.artistCreate(createArtistDto);
+  async create(createArtistDto: CreateArtistDto) {
+    const dbResponse = new DBResponse<Artist>();
+    const artistWithDto = this.artistRepository.create(createArtistDto);
+    const newArtist = await this.artistRepository.save(artistWithDto);
+    dbResponse.data = newArtist;
+
+    return dbResponse;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    return this.db.artistUpdate(id, updateArtistDto);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const dbResponse = new DBResponse<Artist>();
+
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      return dbResponse;
+    }
+
+    const artistWithNewData = {
+      ...existingArtist,
+      ...updateArtistDto,
+    };
+
+    const artist = await this.artistRepository.save(artistWithNewData);
+    dbResponse.data = artist;
+
+    return dbResponse;
   }
 
-  delete(id: string) {
-    return this.db.artistDelete(id);
+  async delete(id: string) {
+    const dbResponse = new DBResponse();
+
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+    }
+
+    if (existingArtist) {
+      this.artistRepository.remove(existingArtist);
+    }
+
+    return dbResponse;
   }
 }

@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Artist {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -8,12 +11,14 @@ export class Artist {
   })
   id: string;
 
+  @Column()
   @ApiProperty({
     type: 'string',
     example: 'TestName',
   })
   name: string;
 
+  @Column()
   @ApiProperty({
     type: 'boolean',
     example: true,
