@@ -18,7 +18,7 @@ import {
   SwaggerTrackEndpoint,
 } from './swagger/track.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { TrackService } from './track.service';
 import { TrackNotFoundException } from './track.exceptions';
 import { CreateTrackDto, UpdateTrackDto } from './dto';

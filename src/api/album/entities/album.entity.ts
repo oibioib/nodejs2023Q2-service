@@ -51,4 +51,11 @@ export class Album {
 
   @OneToMany(() => Track, (track) => track.album)
   tracks: Track[];
+
+  @Column({
+    type: 'boolean',
+    default: false,
+    select: false,
+  })
+  favorite: boolean;
 }

@@ -18,7 +18,7 @@ import {
   SwaggerPutArtist,
 } from './swagger/artist.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { ArtistService } from './artist.service';
 import { ArtistNotFoundException } from './artist.exceptions';
 import { CreateArtistDto, UpdateArtistDto } from './dto';

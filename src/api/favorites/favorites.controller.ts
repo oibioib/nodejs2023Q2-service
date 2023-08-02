@@ -14,7 +14,7 @@ import {
   SwaggerDeleteEntityFromFavorites,
 } from './swagger/favorites.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { FavoritesService } from './favorites.service';
 import { FavoritesException } from './favorites.exceptions';
 
@@ -25,16 +25,18 @@ export class FavoritesController {
 
   @Get()
   @SwaggerGetAllFavorites()
-  readAll() {
-    const { data } = this.favoritesService.readAll();
+  async readAll() {
+    const { data } = await this.favoritesService.readAll();
     return data;
   }
 
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Track')
-  addTrack(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.favoritesService.addFavoriteTrack(id);
+  async addTrack(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.favoritesService.addFavoriteTrack(
+      id,
+    );
 
     if (data === id) {
       return {
@@ -54,8 +56,10 @@ export class FavoritesController {
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Album')
-  addAlbum(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.favoritesService.addFavoriteAlbum(id);
+  async addAlbum(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.favoritesService.addFavoriteAlbum(
+      id,
+    );
 
     if (data === id) {
       return {
@@ -75,8 +79,10 @@ export class FavoritesController {
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
   @SwaggerAddEntityToFavorites('Artist')
-  addArtist(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.favoritesService.addFavoriteArtist(id);
+  async addArtist(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.favoritesService.addFavoriteArtist(
+      id,
+    );
 
     if (data === id) {
       return {
@@ -96,8 +102,8 @@ export class FavoritesController {
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Track')
-  deleteTrack(@UUIDParam('id') id: string) {
-    const { errorCode } = this.favoritesService.deleteFavoriteTrack(id);
+  async deleteTrack(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.favoritesService.deleteFavoriteTrack(id);
 
     if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Track', id, HttpStatus.NOT_FOUND);
@@ -106,8 +112,8 @@ export class FavoritesController {
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Album')
-  deleteAlbum(@UUIDParam('id') id: string) {
-    const { errorCode } = this.favoritesService.deleteFavoriteAlbum(id);
+  async deleteAlbum(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.favoritesService.deleteFavoriteAlbum(id);
 
     if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Album', id, HttpStatus.NOT_FOUND);
@@ -116,8 +122,8 @@ export class FavoritesController {
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteEntityFromFavorites('Artist')
-  deleteArtist(@UUIDParam('id') id: string) {
-    const { errorCode } = this.favoritesService.deleteFavoriteArtist(id);
+  async deleteArtist(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.favoritesService.deleteFavoriteArtist(id);
 
     if (errorCode === HttpStatus.NOT_FOUND)
       throw new FavoritesException('Artist', id, HttpStatus.NOT_FOUND);

@@ -58,4 +58,11 @@ export class Track {
 
   @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'SET NULL' })
   album: Album;
+
+  @Column({
+    type: 'boolean',
+    default: false,
+    select: false,
+  })
+  favorite: boolean;
 }

@@ -4,7 +4,7 @@ import { CreateAlbumDto, UpdateAlbumDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from './entities/album.entity';
 import { Repository } from 'typeorm';
-import { DBResponse } from 'src/db/response/db-response';
+import { ServiceResponse } from 'src/libs/service-response';
 
 @Injectable()
 export class AlbumService {
@@ -14,15 +14,15 @@ export class AlbumService {
   ) {}
 
   async readAll() {
-    const dbResponse = new DBResponse<Album[]>();
+    const serviceResponse = new ServiceResponse<Album[]>();
     const albums = await this.albumRepository.find();
-    dbResponse.data = albums;
+    serviceResponse.data = albums;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async readOne(id: string) {
-    const dbResponse = new DBResponse<Album>();
+    const serviceResponse = new ServiceResponse<Album>();
     const existingAlbum = await this.albumRepository.findOne({
       where: {
         id,
@@ -30,26 +30,26 @@ export class AlbumService {
     });
 
     if (!existingAlbum) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
-    dbResponse.data = existingAlbum;
+    serviceResponse.data = existingAlbum;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async create(createAlbumDto: CreateAlbumDto) {
-    const dbResponse = new DBResponse<Album>();
+    const serviceResponse = new ServiceResponse<Album>();
     const albumWithDto = this.albumRepository.create(createAlbumDto);
     const newAlbum = await this.albumRepository.save(albumWithDto);
-    dbResponse.data = newAlbum;
+    serviceResponse.data = newAlbum;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const dbResponse = new DBResponse<Album>();
+    const serviceResponse = new ServiceResponse<Album>();
 
     const existingAlbum = await this.albumRepository.findOne({
       where: {
@@ -58,8 +58,8 @@ export class AlbumService {
     });
 
     if (!existingAlbum) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
     const albumWithNewData = {
@@ -68,13 +68,13 @@ export class AlbumService {
     };
 
     const album = await this.albumRepository.save(albumWithNewData);
-    dbResponse.data = album;
+    serviceResponse.data = album;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async delete(id: string) {
-    const dbResponse = new DBResponse();
+    const serviceResponse = new ServiceResponse();
     const existingAlbum = await this.albumRepository.findOne({
       where: {
         id,
@@ -82,12 +82,62 @@ export class AlbumService {
     });
 
     if (!existingAlbum) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
     }
 
     if (existingAlbum) {
       await this.albumRepository.remove(existingAlbum);
     }
-    return dbResponse;
+    return serviceResponse;
+  }
+
+  async getFavoriteAlbums() {
+    const favoriteAlbums = await this.albumRepository.find({
+      where: { favorite: true },
+    });
+
+    return favoriteAlbums;
+  }
+
+  async addAlbumToFavorites(id: string) {
+    const existingAlbum = await this.albumRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingAlbum) {
+      return null;
+    }
+
+    const track = {
+      ...existingAlbum,
+      favorite: true,
+    };
+
+    await this.albumRepository.save(track);
+
+    return id;
+  }
+
+  async deleteAlbumFromFavorites(id: string) {
+    const existingAlbum = await this.albumRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingAlbum) {
+      return null;
+    }
+
+    const track = {
+      ...existingAlbum,
+      favorite: false,
+    };
+
+    await this.albumRepository.save(track);
+
+    return id;
   }
 }

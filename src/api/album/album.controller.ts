@@ -18,7 +18,7 @@ import {
   SwaggerPutAlbum,
 } from './swagger/album.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { AlbumService } from './album.service';
 import { AlbumNotFoundException } from './album.exceptions';
 import { CreateAlbumDto, UpdateAlbumDto } from './dto';

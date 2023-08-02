@@ -4,7 +4,7 @@ import { CreateTrackDto, UpdateTrackDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Track } from './entities/track.entity';
-import { DBResponse } from 'src/db/response/db-response';
+import { ServiceResponse } from 'src/libs/service-response';
 
 @Injectable()
 export class TrackService {
@@ -14,14 +14,14 @@ export class TrackService {
   ) {}
 
   async readAll() {
-    const dbResponse = new DBResponse<Track[]>();
+    const serviceResponse = new ServiceResponse<Track[]>();
     const tracks = await this.trackRepository.find();
-    dbResponse.data = tracks;
-    return dbResponse;
+    serviceResponse.data = tracks;
+    return serviceResponse;
   }
 
   async readOne(id: string) {
-    const dbResponse = new DBResponse<Track>();
+    const serviceResponse = new ServiceResponse<Track>();
     const existingTrack = await this.trackRepository.findOne({
       where: {
         id,
@@ -29,24 +29,24 @@ export class TrackService {
     });
 
     if (!existingTrack) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
-    dbResponse.data = existingTrack;
-    return dbResponse;
+    serviceResponse.data = existingTrack;
+    return serviceResponse;
   }
 
   async create(createTrackDto: CreateTrackDto) {
-    const dbResponse = new DBResponse<Track>();
+    const serviceResponse = new ServiceResponse<Track>();
     const trackWithDto = this.trackRepository.create(createTrackDto);
     const newTrack = await this.trackRepository.save(trackWithDto);
-    dbResponse.data = newTrack;
-    return dbResponse;
+    serviceResponse.data = newTrack;
+    return serviceResponse;
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    const dbResponse = new DBResponse<Track>();
+    const serviceResponse = new ServiceResponse<Track>();
     const existingTrack = await this.trackRepository.findOne({
       where: {
         id,
@@ -54,8 +54,8 @@ export class TrackService {
     });
 
     if (!existingTrack) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
     const trackWithNewData = {
@@ -64,13 +64,13 @@ export class TrackService {
     };
 
     const track = await this.trackRepository.save(trackWithNewData);
-    dbResponse.data = track;
+    serviceResponse.data = track;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async delete(id: string) {
-    const dbResponse = new DBResponse();
+    const serviceResponse = new ServiceResponse();
 
     const existingTrack = await this.trackRepository.findOne({
       where: {
@@ -79,13 +79,63 @@ export class TrackService {
     });
 
     if (!existingTrack) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
     }
 
     if (existingTrack) {
       await this.trackRepository.remove(existingTrack);
     }
 
-    return dbResponse;
+    return serviceResponse;
+  }
+
+  async getFavoriteTracks() {
+    const favoriteTracks = await this.trackRepository.find({
+      where: { favorite: true },
+    });
+
+    return favoriteTracks;
+  }
+
+  async addTrackToFavorites(id: string) {
+    const existingTrack = await this.trackRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingTrack) {
+      return null;
+    }
+
+    const track = {
+      ...existingTrack,
+      favorite: true,
+    };
+
+    await this.trackRepository.save(track);
+
+    return id;
+  }
+
+  async deleteTrackFromFavorites(id: string) {
+    const existingTrack = await this.trackRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingTrack) {
+      return null;
+    }
+
+    const track = {
+      ...existingTrack,
+      favorite: false,
+    };
+
+    await this.trackRepository.save(track);
+
+    return id;
   }
 }

@@ -4,7 +4,7 @@ import { CreateArtistDto, UpdateArtistDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from './entities/artist.entity';
 import { Repository } from 'typeorm';
-import { DBResponse } from 'src/db/response/db-response';
+import { ServiceResponse } from 'src/libs/service-response';
 
 @Injectable()
 export class ArtistService {
@@ -14,15 +14,15 @@ export class ArtistService {
   ) {}
 
   async readAll() {
-    const dbResponse = new DBResponse<Artist[]>();
+    const serviceResponse = new ServiceResponse<Artist[]>();
     const artists = await this.artistRepository.find();
-    dbResponse.data = artists;
+    serviceResponse.data = artists;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async readOne(id: string) {
-    const dbResponse = new DBResponse<Artist>();
+    const serviceResponse = new ServiceResponse<Artist>();
     const existingArtist = await this.artistRepository.findOne({
       where: {
         id,
@@ -30,26 +30,26 @@ export class ArtistService {
     });
 
     if (!existingArtist) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
-    dbResponse.data = existingArtist;
+    serviceResponse.data = existingArtist;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async create(createArtistDto: CreateArtistDto) {
-    const dbResponse = new DBResponse<Artist>();
+    const serviceResponse = new ServiceResponse<Artist>();
     const artistWithDto = this.artistRepository.create(createArtistDto);
     const newArtist = await this.artistRepository.save(artistWithDto);
-    dbResponse.data = newArtist;
+    serviceResponse.data = newArtist;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
-    const dbResponse = new DBResponse<Artist>();
+    const serviceResponse = new ServiceResponse<Artist>();
 
     const existingArtist = await this.artistRepository.findOne({
       where: {
@@ -58,8 +58,8 @@ export class ArtistService {
     });
 
     if (!existingArtist) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
-      return dbResponse;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
     }
 
     const artistWithNewData = {
@@ -68,13 +68,13 @@ export class ArtistService {
     };
 
     const artist = await this.artistRepository.save(artistWithNewData);
-    dbResponse.data = artist;
+    serviceResponse.data = artist;
 
-    return dbResponse;
+    return serviceResponse;
   }
 
   async delete(id: string) {
-    const dbResponse = new DBResponse();
+    const serviceResponse = new ServiceResponse();
 
     const existingArtist = await this.artistRepository.findOne({
       where: {
@@ -83,13 +83,63 @@ export class ArtistService {
     });
 
     if (!existingArtist) {
-      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
     }
 
     if (existingArtist) {
       await this.artistRepository.remove(existingArtist);
     }
 
-    return dbResponse;
+    return serviceResponse;
+  }
+
+  async getFavoriteArtists() {
+    const favoriteArtists = await this.artistRepository.find({
+      where: { favorite: true },
+    });
+
+    return favoriteArtists;
+  }
+
+  async addArtistToFavorites(id: string) {
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      return null;
+    }
+
+    const track = {
+      ...existingArtist,
+      favorite: true,
+    };
+
+    await this.artistRepository.save(track);
+
+    return id;
+  }
+
+  async deleteArtistFromFavorites(id: string) {
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      return null;
+    }
+
+    const track = {
+      ...existingArtist,
+      favorite: false,
+    };
+
+    await this.artistRepository.save(track);
+
+    return id;
   }
 }

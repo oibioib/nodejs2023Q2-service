@@ -18,7 +18,7 @@ import {
   SwaggerDeleteUser,
 } from './swagger/user.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { UserService } from './user.service';
 import {
   InvalidPasswordException,
