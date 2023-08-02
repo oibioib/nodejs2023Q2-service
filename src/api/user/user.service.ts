@@ -1,29 +1,113 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { DbService } from 'src/db/db.service';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { DBResponse } from 'src/db/response/db-response';
+import { UserWithoutPassword } from './entities/user-without-password.entity copy';
+import { getUserToResponse } from 'src/utils/user';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) {}
+  constructor(
+    private db: DbService,
 
-  readAll() {
-    return this.db.userGetAll();
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async readAll() {
+    const dbResponse = new DBResponse<UserWithoutPassword[]>();
+    const users = await this.userRepository.find();
+
+    dbResponse.data = users.map(getUserToResponse);
+    return dbResponse;
   }
 
-  readOne(id: string) {
-    return this.db.userGetOne(id);
+  async readOne(id: string) {
+    const dbResponse = new DBResponse<UserWithoutPassword>();
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingUser) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      return dbResponse;
+    }
+
+    dbResponse.data = getUserToResponse(existingUser);
+
+    return dbResponse;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return this.db.userCreate(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const dbResponse = new DBResponse<UserWithoutPassword>();
+    const userWithDto = this.userRepository.create(createUserDto);
+    userWithDto.version = 1;
+
+    const newUser = await this.userRepository.save(userWithDto);
+
+    dbResponse.data = getUserToResponse(newUser);
+
+    return dbResponse;
   }
 
-  update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    return this.db.userUpdate(id, updatePasswordDto);
+  async update(id: string, updatePasswordDto: UpdatePasswordDto) {
+    const dbResponse = new DBResponse<UserWithoutPassword>();
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingUser) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+      return dbResponse;
+    }
+
+    const { password, version } = existingUser;
+    const { oldPassword, newPassword } = updatePasswordDto;
+
+    if (password !== oldPassword) {
+      dbResponse.errorCode = HttpStatus.FORBIDDEN;
+      return dbResponse;
+    }
+
+    const userWithNewData = {
+      ...existingUser,
+      password: newPassword,
+      version: version + 1,
+    };
+
+    const user = await this.userRepository.save(userWithNewData);
+    dbResponse.data = getUserToResponse(user);
+
+    return dbResponse;
   }
 
-  delete(id: string) {
-    return this.db.userDelete(id);
+  async delete(id: string) {
+    const dbResponse = new DBResponse();
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingUser) {
+      dbResponse.errorCode = HttpStatus.NOT_FOUND;
+    }
+
+    if (existingUser) {
+      this.userRepository.remove(existingUser);
+    }
+
+    return dbResponse;
   }
 }
