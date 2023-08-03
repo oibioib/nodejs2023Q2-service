@@ -6,12 +6,42 @@ services:
     build:
       context: .
       dockerfile: ./postgres/Dockerfile
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     restart: always
     env_file:
       - .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - bridge-network
+    volumes:
+      - postgres-data-with-logs:/var/lib/postgresql/data
+    command:
+      ['postgres', '-c', 'logging_collector=on', '-c', 'log_statement=all']
+
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - bridge-network
+    volumes:
+      - ./src:/app/src
+
+networks:
+  bridge-network:
+    driver: bridge
+
+volumes:
+  postgres-data-with-logs:
