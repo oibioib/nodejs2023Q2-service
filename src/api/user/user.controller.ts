@@ -7,6 +7,8 @@ import {
   Post,
   Delete,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import {
@@ -27,6 +29,7 @@ import {
 import { CreateUserDto, UpdatePasswordDto } from './dto';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 @SwaggerUserEndpoint()
 export class UserController {
   constructor(private readonly userService: UserService) {}

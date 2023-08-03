@@ -1,12 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { CreateUserDto, UpdatePasswordDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+
 import { ServiceResponse } from 'src/libs/service-response';
-import { UserWithoutPassword } from './entities/user-without-password.entity copy';
-import { getUserToResponse } from 'src/libs/user';
+import { CreateUserDto, UpdatePasswordDto } from './dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -16,15 +14,15 @@ export class UserService {
   ) {}
 
   async readAll() {
-    const serviceResponse = new ServiceResponse<UserWithoutPassword[]>();
+    const serviceResponse = new ServiceResponse<User[]>();
     const users = await this.userRepository.find();
 
-    serviceResponse.data = users.map(getUserToResponse);
+    serviceResponse.data = users;
     return serviceResponse;
   }
 
   async readOne(id: string) {
-    const serviceResponse = new ServiceResponse<UserWithoutPassword>();
+    const serviceResponse = new ServiceResponse<User>();
 
     const existingUser = await this.userRepository.findOne({
       where: {
@@ -37,25 +35,25 @@ export class UserService {
       return serviceResponse;
     }
 
-    serviceResponse.data = getUserToResponse(existingUser);
+    serviceResponse.data = existingUser;
 
     return serviceResponse;
   }
 
   async create(createUserDto: CreateUserDto) {
-    const serviceResponse = new ServiceResponse<UserWithoutPassword>();
+    const serviceResponse = new ServiceResponse<User>();
     const userWithDto = this.userRepository.create(createUserDto);
     userWithDto.version = 1;
 
     const newUser = await this.userRepository.save(userWithDto);
 
-    serviceResponse.data = getUserToResponse(newUser);
+    serviceResponse.data = newUser;
 
     return serviceResponse;
   }
 
   async update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const serviceResponse = new ServiceResponse<UserWithoutPassword>();
+    const serviceResponse = new ServiceResponse<User>();
 
     const existingUser = await this.userRepository.findOne({
       where: {
@@ -82,8 +80,10 @@ export class UserService {
       version: version + 1,
     };
 
-    const user = await this.userRepository.save(userWithNewData);
-    serviceResponse.data = getUserToResponse(user);
+    const updatedUser = this.userRepository.create(userWithNewData);
+    const user = await this.userRepository.save(updatedUser);
+
+    serviceResponse.data = user;
 
     return serviceResponse;
   }

@@ -1,4 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Exclude, Transform } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -26,6 +27,7 @@ export class User {
 
   @Column()
   @ApiHideProperty()
+  @Exclude()
   password: string;
 
   @Column()
@@ -36,6 +38,9 @@ export class User {
   version: number;
 
   @CreateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime(), {
+    toPlainOnly: true,
+  })
   @ApiProperty({
     type: 'number',
     example: 1655000000,
@@ -43,6 +48,9 @@ export class User {
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime(), {
+    toPlainOnly: true,
+  })
   @ApiProperty({
     type: 'number',
     example: 1655000000,
