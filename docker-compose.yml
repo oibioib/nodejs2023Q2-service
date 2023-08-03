@@ -2,10 +2,11 @@ version: '3'
 
 services:
   postgres:
-    container_name: postgres
+    container_name: hml-postgres-service
+    image: hml-postgres
     build:
-      context: .
-      dockerfile: ./postgres/Dockerfile
+      context: ./postgres
+      dockerfile: Dockerfile
     restart: always
     env_file:
       - .env
@@ -23,10 +24,11 @@ services:
       ['postgres', '-c', 'logging_collector=on', '-c', 'log_statement=all']
 
   app:
-    container_name: app
+    container_name: hml-app-service
+    image: hml-app
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - postgres
