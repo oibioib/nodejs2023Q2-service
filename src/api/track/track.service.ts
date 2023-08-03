@@ -1,10 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { CreateTrackDto, UpdateTrackDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Track } from './entities/track.entity';
+
 import { ServiceResponse } from 'src/libs/service-response';
+import { CreateTrackDto, UpdateTrackDto } from './dto';
+import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TrackService {

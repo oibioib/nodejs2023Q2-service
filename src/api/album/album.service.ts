@@ -1,10 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { CreateAlbumDto, UpdateAlbumDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Album } from './entities/album.entity';
 import { Repository } from 'typeorm';
+
 import { ServiceResponse } from 'src/libs/service-response';
+import { CreateAlbumDto, UpdateAlbumDto } from './dto';
+import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {

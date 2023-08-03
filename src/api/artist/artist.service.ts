@@ -1,10 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { CreateArtistDto, UpdateArtistDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Artist } from './entities/artist.entity';
 import { Repository } from 'typeorm';
+
 import { ServiceResponse } from 'src/libs/service-response';
+import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {

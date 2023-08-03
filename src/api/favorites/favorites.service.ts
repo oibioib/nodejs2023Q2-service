@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
+import { ServiceResponse } from 'src/libs/service-response';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
 import { TrackService } from '../track/track.service';
-import { ServiceResponse } from 'src/libs/service-response';
 import { Favorites } from './entities/favorites.entity';
 
 @Injectable()
