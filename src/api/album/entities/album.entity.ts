@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Artist } from 'src/api/artist/entities/artist.entity';
-import { Track } from 'src/api/track/entities/track.entity';
+import { Artist } from '../../artist/entities/artist.entity';
+import { Track } from '../../track/entities/track.entity';
 import {
   Column,
   Entity,

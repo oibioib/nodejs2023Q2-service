@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Album } from 'src/api/album/entities/album.entity';
-import { Track } from 'src/api/track/entities/track.entity';
+import { Album } from '../../album/entities/album.entity';
+import { Track } from '../../track/entities/track.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
