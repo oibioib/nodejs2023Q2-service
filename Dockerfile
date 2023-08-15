@@ -10,4 +10,7 @@ RUN npm cache clean --force
 
 COPY . .
 
-CMD [ "npm", "run", "start:dev" ]
+RUN npm i -g typescript
+
+CMD [ "npm", "run", "start:app" ]
+

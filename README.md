@@ -34,13 +34,9 @@ Create .env file (based on .env.example): ./.env
 npm run docker:compose
 ```
 
-```
-npm run migration:run
-```
-
 ## Testing
 
-Run tests after complete commands `npm run docker:compose` and `npm run migration:run`
+Run tests after complete command `npm run docker:compose`
 
 ```
 npm run test
