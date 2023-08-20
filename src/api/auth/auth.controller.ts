@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import {
 } from './auth.exceptions';
 import { SwaggerAuthEndpoint } from './swagger/auth.swagger';
 import { AuthUserDto, RefreshTokenDto } from './dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -44,6 +46,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     const { data, errorCode } = await this.authService.refresh(refreshTokenDto);
