@@ -15,7 +15,7 @@ export const dataSourceConfig: DataSourceOptions = {
   username: configService.get('POSTGRES_USER'),
   password: configService.get('POSTGRES_PASSWORD'),
   database: configService.get('POSTGRES_DATABASE'),
-  synchronize: false,
+  synchronize: true,
   entities: [User, Artist, Album, Track],
 };
 

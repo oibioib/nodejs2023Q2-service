@@ -15,7 +15,7 @@ import { dataSourceConfig } from './config/data-source.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(dataSourceConfig),
     UserModule,
     ArtistModule,
