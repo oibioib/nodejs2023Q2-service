@@ -10,6 +10,7 @@ import { ArtistModule } from './api/artist/artist.module';
 import { TrackModule } from './api/track/track.module';
 import { AlbumModule } from './api/album/album.module';
 import { FavoritesModule } from './api/favorites/favorites.module';
+import { AuthModule } from './api/auth/auth.module';
 
 import { dataSourceConfig } from './config/data-source.config';
 
@@ -22,6 +23,7 @@ import { dataSourceConfig } from './config/data-source.config';
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
