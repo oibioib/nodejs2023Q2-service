@@ -59,7 +59,7 @@ export const SwaggerPostUser = () => {
     }),
     ApiBadRequestResponse({
       description:
-        'Bad request. Body does not contain required fields: [ ...fields ].',
+        'Bad request. Error in request body. Error fields: [ ...fields ].',
     }),
   );
 };
