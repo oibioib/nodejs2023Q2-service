@@ -17,7 +17,6 @@ export const dataSourceConfig: DataSourceOptions = {
   database: configService.get('POSTGRES_DATABASE'),
   synchronize: false,
   entities: [User, Artist, Album, Track],
-  migrations: ['migrations/*.js'],
 };
 
 const dataSource = new DataSource(dataSourceConfig);
