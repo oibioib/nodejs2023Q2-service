@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -17,8 +18,10 @@ import {
 import { UUIDParam } from 'src/libs/id';
 import { FavoritesService } from './favorites.service';
 import { FavoritesException } from './favorites.exceptions';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('favs')
+@UseGuards(AuthGuard)
 @SwaggerFavoritesEndpoint()
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}

@@ -4,9 +4,10 @@ import { ArtistController } from './artist.controller';
 import { ArtistService } from './artist.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Artist } from './entities/artist.entity';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Artist])],
+  imports: [TypeOrmModule.forFeature([Artist]), TokenModule],
   controllers: [ArtistController],
   providers: [ArtistService],
   exports: [ArtistService],

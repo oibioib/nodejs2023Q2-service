@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -22,9 +23,11 @@ import { UUIDParam } from 'src/libs/id';
 import { ArtistService } from './artist.service';
 import { ArtistNotFoundException } from './artist.exceptions';
 import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
-@SwaggerArtistEndpoint()
 @Controller('artist')
+@UseGuards(AuthGuard)
+@SwaggerArtistEndpoint()
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 

@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -22,8 +23,10 @@ import { UUIDParam } from 'src/libs/id';
 import { TrackService } from './track.service';
 import { TrackNotFoundException } from './track.exceptions';
 import { CreateTrackDto, UpdateTrackDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('track')
+@UseGuards(AuthGuard)
 @SwaggerTrackEndpoint()
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}

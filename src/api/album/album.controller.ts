@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -22,8 +23,10 @@ import { UUIDParam } from 'src/libs/id';
 import { AlbumService } from './album.service';
 import { AlbumNotFoundException } from './album.exceptions';
 import { CreateAlbumDto, UpdateAlbumDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('album')
+@UseGuards(AuthGuard)
 @SwaggerAlbumEndpoint()
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
