@@ -9,6 +9,7 @@ import {
   Put,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -27,8 +28,10 @@ import {
   UserNotFoundException,
 } from './user.exceptions';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('user')
+@UseGuards(AuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @SwaggerUserEndpoint()
 export class UserController {

@@ -121,4 +121,33 @@ export class UserService {
 
     return serviceResponse;
   }
+
+  async isUserLoginExists(login: string) {
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        login,
+      },
+    });
+
+    return !!existingUser;
+  }
+
+  async getValidUser({ login, password }: CreateUserDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        login,
+      },
+    });
+
+    if (!existingUser) return null;
+
+    const isPasswordValid = await this.hashingService.compare(
+      password,
+      existingUser.password,
+    );
+
+    if (!isPasswordValid) return null;
+
+    return existingUser;
+  }
 }
