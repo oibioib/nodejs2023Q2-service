@@ -12,9 +12,12 @@ import { AlbumModule } from './api/album/album.module';
 import { FavoritesModule } from './api/favorites/favorites.module';
 import { AuthModule } from './api/auth/auth.module';
 
-import { dataSourceConfig } from './config/data-source.config';
 import { LoggingMiddleware } from './logging/logging.middleware';
 import { LoggingModule } from './logging/logging.module';
+
+import AppExceptionsFilter from './exception/exception.filter';
+
+import { dataSourceConfig } from './config/data-source.config';
 
 @Module({
   imports: [
@@ -29,7 +32,7 @@ import { LoggingModule } from './logging/logging.module';
     LoggingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppExceptionsFilter],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
