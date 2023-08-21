@@ -39,6 +39,7 @@ export class AuthService {
     const validUser = await this.userService.getValidUser(authUserDto);
 
     if (!validUser) {
+      serviceResponse.errorCode = HttpStatus.FORBIDDEN;
       return serviceResponse;
     }
 

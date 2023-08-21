@@ -1,17 +1,23 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Track } from '../entities/track.entity';
 
 export const SwaggerTrackEndpoint = () => {
-  return applyDecorators(ApiTags('Track'));
+  return applyDecorators(
+    ApiTags('Track'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllTracks = () => {

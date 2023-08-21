@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -8,11 +9,16 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
 
 export const SwaggerUserEndpoint = () => {
-  return applyDecorators(ApiTags('User'));
+  return applyDecorators(
+    ApiTags('User'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllUsers = () => {

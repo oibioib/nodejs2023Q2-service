@@ -13,9 +13,15 @@ import {
   AuthenticationFailedException,
   UserLoginNotExistsException,
 } from './auth.exceptions';
-import { SwaggerAuthEndpoint } from './swagger/auth.swagger';
+import {
+  SwaggerAuthEndpoint,
+  SwaggerAuthLogin,
+  SwaggerAuthRefresh,
+  SwaggerAuthSignUp,
+} from './swagger/auth.swagger';
 import { AuthUserDto, RefreshTokenDto } from './dto';
 import { AuthGuard } from './auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -25,6 +31,7 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
+  @SwaggerAuthSignUp()
   async signup(@Body() authUserDto: AuthUserDto) {
     const { data, errorCode } = await this.authService.signup(authUserDto);
 
@@ -36,6 +43,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @SwaggerAuthLogin()
   async login(@Body() authUserDto: AuthUserDto) {
     const { data, errorCode } = await this.authService.login(authUserDto);
 
@@ -47,7 +55,9 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('accessToken')
   @HttpCode(HttpStatus.OK)
+  @SwaggerAuthRefresh()
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     const { data, errorCode } = await this.authService.refresh(refreshTokenDto);
 
