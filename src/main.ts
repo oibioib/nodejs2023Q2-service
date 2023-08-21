@@ -4,9 +4,12 @@ import { getAppPort } from './config/app.config';
 import { createSwaggerSchema } from './config/swagger.config';
 import { AppValidationPipe } from './config/validate.config';
 import { Logger } from '@nestjs/common';
+import { LoggingService } from './logging/logging.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new LoggingService(),
+  });
   app.useGlobalPipes(AppValidationPipe);
   const port = getAppPort();
   createSwaggerSchema(app);
