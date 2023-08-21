@@ -1,19 +1,29 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { COLOR_RESET, COLORS } from './logging.colors';
+import { ConfigService } from '@nestjs/config';
+import { mkdirSync, readdirSync, writeFileSync } from 'fs';
+import { EOL } from 'os';
+import { join } from 'path';
+
 import {
   LOG_METHODS,
   LOG_METHODS_LEVELS,
   LOG_METHODS_TO_CONSOLE,
 } from './logging.constants';
-import { ConfigService } from '@nestjs/config';
+import { COLOR_RESET, COLORS } from './logging.colors';
+import { getLogFileName, isDirExist } from './logging.utils';
 
 @Injectable()
 export class LoggingService extends ConsoleLogger {
   _logLevel: number;
+  _logFileSize: number;
+  _logsPath: string;
 
   constructor(private readonly configService: ConfigService) {
     super();
     this._logLevel = this.configService.get('LOG_LEVEL') || 2;
+    this._logFileSize =
+      (this.configService.get('LOG_MAX_FILE_SIZE_MB') || 10) * 1024 * 1024;
+    this._logsPath = join(process.cwd(), 'logs');
   }
 
   log(message: any) {
@@ -40,6 +50,33 @@ export class LoggingService extends ConsoleLogger {
     this._performLogging(LOG_METHODS.REQUEST, message, COLORS.BLUE);
   }
 
+  _performLoggingToFile(message: string, logMethod: keyof typeof LOG_METHODS) {
+    const isFolderExist = isDirExist(this._logsPath);
+
+    if (!isFolderExist) {
+      mkdirSync(this._logsPath);
+    }
+
+    const dirContent = readdirSync(this._logsPath, { withFileTypes: true });
+    const files: string[] = [];
+
+    dirContent.forEach((item) => {
+      if (item.isFile()) {
+        files.push(item.name);
+      }
+    });
+
+    const filename = getLogFileName(
+      files,
+      logMethod,
+      this._logFileSize,
+      this._logsPath,
+    );
+
+    const logPath = join(this._logsPath, filename);
+    writeFileSync(logPath, message, { flag: 'a' });
+  }
+
   _performLogging(
     logMethod: keyof typeof LOG_METHODS,
     message: string,
@@ -52,5 +89,12 @@ export class LoggingService extends ConsoleLogger {
     const logMessage = `${color}[ ${logMethod} ]${COLOR_RESET} [${new Date().toISOString()}] ${message}`;
     const consoleMethod = LOG_METHODS_TO_CONSOLE[logMethod];
     console[consoleMethod](logMessage);
+
+    if (logMethod === LOG_METHODS.REQUEST) {
+      return;
+    }
+
+    const logMessageToFile = `[ ${logMethod} ] [${new Date().toISOString()}] ${message} ${EOL}`;
+    this._performLoggingToFile(logMessageToFile, logMethod);
   }
 }

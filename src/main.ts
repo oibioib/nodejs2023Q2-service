@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+
 import { AppModule } from './app.module';
+
 import { getAppPort } from './config/app.config';
 import { createSwaggerSchema } from './config/swagger.config';
 import { AppValidationPipe } from './config/validate.config';
+
 import { LoggingService } from './logging/logging.service';
-import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const configService = new ConfigService();

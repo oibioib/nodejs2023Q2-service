@@ -1,13 +1,14 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { LoggingService } from './logging.service';
 import { EOL } from 'os';
+
+import { LoggingService } from './logging.service';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
   constructor(private loggingService: LoggingService) {}
 
-  logRequest = async (req: Request, res: Response) => {
+  logRequest(req: Request, res: Response) {
     const { statusCode } = res;
     const { originalUrl, method, query, body, headers } = req;
 
@@ -25,7 +26,7 @@ export class LoggingMiddleware implements NestMiddleware {
       .join('');
 
     return this.loggingService.logRequest(message);
-  };
+  }
 
   use(req: Request, res: Response, next: NextFunction) {
     res.on('finish', () => this.logRequest(req, res));
