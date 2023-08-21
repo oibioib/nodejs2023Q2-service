@@ -4,9 +4,11 @@ import { getAppPort } from './config/app.config';
 import { createSwaggerSchema } from './config/swagger.config';
 import { AppValidationPipe } from './config/validate.config';
 import { LoggingService } from './logging/logging.service';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const loggingService = new LoggingService();
+  const configService = new ConfigService();
+  const loggingService = new LoggingService(configService);
 
   process.on('uncaughtException', (error) => {
     loggingService.error(`Uncaught Exception: ${error}`);
