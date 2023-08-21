@@ -17,7 +17,7 @@ cd nodejs2023Q2-service
 ```
 
 ```
-git checkout docker-and-typeorm
+git checkout authentication-logging
 ```
 
 ```
@@ -39,7 +39,7 @@ npm run docker:compose
 Run tests after complete command `npm run docker:compose`
 
 ```
-npm run test
+npm run test:auth
 ```
 
 ## Scan for vulnerabilities
