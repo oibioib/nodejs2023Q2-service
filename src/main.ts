@@ -1,17 +1,35 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+
 import { AppModule } from './app.module';
+
 import { getAppPort } from './config/app.config';
 import { createSwaggerSchema } from './config/swagger.config';
 import { AppValidationPipe } from './config/validate.config';
-import { Logger } from '@nestjs/common';
+
+import { LoggingService } from './logging/logging.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const configService = new ConfigService();
+  const loggingService = new LoggingService(configService);
+
+  process.on('uncaughtException', (error) => {
+    loggingService.error(`Uncaught Exception: ${error}`);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    loggingService.error(`Unhandled Rejection: ${reason}`);
+  });
+
+  const app = await NestFactory.create(AppModule, {
+    logger: loggingService,
+  });
   app.useGlobalPipes(AppValidationPipe);
   const port = getAppPort();
   createSwaggerSchema(app);
   await app.listen(port);
-  Logger.log(`Nest application starts on port: ${port}!`, 'Info');
+  loggingService.log(`Nest application starts on port: ${port}!`);
 }
 
 bootstrap();

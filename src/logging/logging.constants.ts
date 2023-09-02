@@ -1,0 +1,32 @@
+export const enum CONSOLE_METHODS {
+  LOG = 'log',
+  ERROR = 'error',
+  WARN = 'warn',
+  DEBUG = 'debug',
+}
+export const enum LOG_METHODS {
+  LOG = 'LOG',
+  ERROR = 'ERROR',
+  WARN = 'WARN',
+  DEBUG = 'DEBUG',
+  VERBOSE = 'VERBOSE',
+  REQUEST = 'REQUEST',
+}
+
+export const LOG_METHODS_TO_CONSOLE: Record<LOG_METHODS, CONSOLE_METHODS> = {
+  LOG: CONSOLE_METHODS.LOG,
+  ERROR: CONSOLE_METHODS.ERROR,
+  WARN: CONSOLE_METHODS.WARN,
+  DEBUG: CONSOLE_METHODS.DEBUG,
+  VERBOSE: CONSOLE_METHODS.LOG,
+  REQUEST: CONSOLE_METHODS.LOG,
+};
+
+export const LOG_METHODS_LEVELS: Record<LOG_METHODS, number> = {
+  LOG: 2,
+  ERROR: 0,
+  WARN: 1,
+  DEBUG: 3,
+  VERBOSE: 4,
+  REQUEST: 2,
+};

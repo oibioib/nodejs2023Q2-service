@@ -1,17 +1,23 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Artist } from '../entities/artist.entity';
 
 export const SwaggerArtistEndpoint = () => {
-  return applyDecorators(ApiTags('Artist'));
+  return applyDecorators(
+    ApiTags('Artist'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllArtists = () => {
@@ -58,7 +64,7 @@ export const SwaggerPostArtist = () => {
     }),
     ApiBadRequestResponse({
       description:
-        'Bad request. Body does not contain required fields: [ ...fields ].',
+        'Bad request. Error in request body. Error fields: [ ...fields ].',
     }),
   );
 };

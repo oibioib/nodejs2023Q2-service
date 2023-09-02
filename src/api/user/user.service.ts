@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { ServiceResponse } from 'src/libs/service-response';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
 import { User } from './entities/user.entity';
+import { HashingService } from 'src/hashing/hashing.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly hashingService: HashingService,
   ) {}
 
   async readAll() {
@@ -42,7 +44,12 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const serviceResponse = new ServiceResponse<User>();
-    const userWithDto = this.userRepository.create(createUserDto);
+
+    const passwordHash = await this.hashingService.getHash(
+      createUserDto.password,
+    );
+    const newUserDto = { ...createUserDto, password: passwordHash };
+    const userWithDto = this.userRepository.create(newUserDto);
     userWithDto.version = 1;
 
     const newUser = await this.userRepository.save(userWithDto);
@@ -69,14 +76,21 @@ export class UserService {
     const { password, version } = existingUser;
     const { oldPassword, newPassword } = updatePasswordDto;
 
-    if (password !== oldPassword) {
+    const isPasswordHashAndOldPasswordSame = await this.hashingService.compare(
+      oldPassword,
+      password,
+    );
+
+    if (!isPasswordHashAndOldPasswordSame) {
       serviceResponse.errorCode = HttpStatus.FORBIDDEN;
       return serviceResponse;
     }
 
+    const newPasswordHash = await this.hashingService.getHash(newPassword);
+
     const userWithNewData = {
       ...existingUser,
-      password: newPassword,
+      password: newPasswordHash,
       version: version + 1,
     };
 
@@ -106,5 +120,34 @@ export class UserService {
     }
 
     return serviceResponse;
+  }
+
+  async isUserLoginExists(login: string) {
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        login,
+      },
+    });
+
+    return !!existingUser;
+  }
+
+  async getValidUser({ login, password }: CreateUserDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        login,
+      },
+    });
+
+    if (!existingUser) return null;
+
+    const isPasswordValid = await this.hashingService.compare(
+      password,
+      existingUser.password,
+    );
+
+    if (!isPasswordValid) return null;
+
+    return existingUser;
   }
 }

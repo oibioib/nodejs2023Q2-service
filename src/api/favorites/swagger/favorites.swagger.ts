@@ -1,18 +1,24 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Favorites } from '../entities/favorites.entity';
 
 export const SwaggerFavoritesEndpoint = () => {
-  return applyDecorators(ApiTags('Favorites'));
+  return applyDecorators(
+    ApiTags('Favorites'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllFavorites = () => {
