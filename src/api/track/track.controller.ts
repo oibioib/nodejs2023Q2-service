@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -18,28 +19,30 @@ import {
   SwaggerTrackEndpoint,
 } from './swagger/track.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { TrackService } from './track.service';
 import { TrackNotFoundException } from './track.exceptions';
 import { CreateTrackDto, UpdateTrackDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('track')
+@UseGuards(AuthGuard)
 @SwaggerTrackEndpoint()
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
   @SwaggerGetAllTracks()
-  readAll() {
-    const { data } = this.trackService.readAll();
+  async readAll() {
+    const { data } = await this.trackService.readAll();
     return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetTrack()
-  readOne(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.trackService.readOne(id);
+  async readOne(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.trackService.readOne(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
 
@@ -49,19 +52,22 @@ export class TrackController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostTrack()
-  createOne(@Body() createTrackDto: CreateTrackDto) {
-    const { data } = this.trackService.create(createTrackDto);
+  async createOne(@Body() createTrackDto: CreateTrackDto) {
+    const { data } = await this.trackService.create(createTrackDto);
     return data;
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerPutTrack()
-  updateOne(
+  async updateOne(
     @UUIDParam('id') id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    const { data, errorCode } = this.trackService.update(id, updateTrackDto);
+    const { data, errorCode } = await this.trackService.update(
+      id,
+      updateTrackDto,
+    );
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
 
@@ -71,8 +77,8 @@ export class TrackController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteTrack()
-  deleteOne(@UUIDParam('id') id: string) {
-    const { errorCode } = this.trackService.delete(id);
+  async deleteOne(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.trackService.delete(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new TrackNotFoundException();
   }

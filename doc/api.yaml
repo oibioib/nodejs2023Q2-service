@@ -13,8 +13,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-      tags: &ref_0
+        '401': &ref_0
+          description: Unauthorized.
+      tags: &ref_1
         - User
+      security: &ref_2
+        - accessToken: []
     post:
       operationId: UserController_createOne
       summary: Create a new user.
@@ -34,8 +38,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: 'Bad request. Body does not contain required fields: [ ...fields ].'
-      tags: *ref_0
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '401': *ref_0
+      tags: *ref_1
+      security: *ref_2
   /user/{id}:
     get:
       operationId: UserController_readOne
@@ -56,9 +62,11 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_0
         '404':
           description: User not found.
-      tags: *ref_0
+      tags: *ref_1
+      security: *ref_2
     put:
       operationId: UserController_updateOne
       summary: Update user's password.
@@ -84,11 +92,13 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_0
         '403':
           description: oldPassword is wrong.
         '404':
           description: User not found.
-      tags: *ref_0
+      tags: *ref_1
+      security: *ref_2
     delete:
       operationId: UserController_deleteOne
       summary: Delete user.
@@ -104,9 +114,11 @@ paths:
           description: The user has been deleted.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_0
         '404':
           description: User not found.
-      tags: *ref_0
+      tags: *ref_1
+      security: *ref_2
   /artist:
     get:
       operationId: ArtistController_readAll
@@ -120,8 +132,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Artist'
-      tags: &ref_1
+        '401': &ref_3
+          description: Unauthorized.
+      tags: &ref_4
         - Artist
+      security: &ref_5
+        - accessToken: []
     post:
       operationId: ArtistController_createOne
       summary: Create a new artist.
@@ -141,8 +157,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Artist'
         '400':
-          description: 'Bad request. Body does not contain required fields: [ ...fields ].'
-      tags: *ref_1
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '401': *ref_3
+      tags: *ref_4
+      security: *ref_5
   /artist/{id}:
     get:
       operationId: ArtistController_readOne
@@ -163,9 +181,11 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_3
         '404':
           description: Artist not found.
-      tags: *ref_1
+      tags: *ref_4
+      security: *ref_5
     put:
       operationId: ArtistController_updateOne
       summary: Update artist information.
@@ -191,9 +211,11 @@ paths:
                 $ref: '#/components/schemas/Artist'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_3
         '404':
           description: Artist not found.
-      tags: *ref_1
+      tags: *ref_4
+      security: *ref_5
     delete:
       operationId: ArtistController_deleteOne
       summary: Delete artist.
@@ -209,9 +231,11 @@ paths:
           description: The artist has been deleted.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_3
         '404':
           description: Artist not found.
-      tags: *ref_1
+      tags: *ref_4
+      security: *ref_5
   /track:
     get:
       operationId: TrackController_readAll
@@ -225,8 +249,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Track'
-      tags: &ref_2
+        '401': &ref_6
+          description: Unauthorized.
+      tags: &ref_7
         - Track
+      security: &ref_8
+        - accessToken: []
     post:
       operationId: TrackController_createOne
       summary: Create a new track.
@@ -246,8 +274,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Track'
         '400':
-          description: 'Bad request. Body does not contain required fields: [ ...fields ].'
-      tags: *ref_2
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '401': *ref_6
+      tags: *ref_7
+      security: *ref_8
   /track/{id}:
     get:
       operationId: TrackController_readOne
@@ -268,9 +298,11 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_6
         '404':
           description: Track not found.
-      tags: *ref_2
+      tags: *ref_7
+      security: *ref_8
     put:
       operationId: TrackController_updateOne
       summary: Update track information.
@@ -296,9 +328,11 @@ paths:
                 $ref: '#/components/schemas/Track'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_6
         '404':
           description: Track not found.
-      tags: *ref_2
+      tags: *ref_7
+      security: *ref_8
     delete:
       operationId: TrackController_deleteOne
       summary: Delete track.
@@ -314,9 +348,11 @@ paths:
           description: The track has been deleted.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_6
         '404':
           description: Track not found.
-      tags: *ref_2
+      tags: *ref_7
+      security: *ref_8
   /album:
     get:
       operationId: AlbumController_readAll
@@ -330,8 +366,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Album'
-      tags: &ref_3
+        '401': &ref_9
+          description: Unauthorized.
+      tags: &ref_10
         - Album
+      security: &ref_11
+        - accessToken: []
     post:
       operationId: AlbumController_createOne
       summary: Create a new album.
@@ -351,8 +391,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Album'
         '400':
-          description: 'Bad request. Body does not contain required fields: [ ...fields ].'
-      tags: *ref_3
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '401': *ref_9
+      tags: *ref_10
+      security: *ref_11
   /album/{id}:
     get:
       operationId: AlbumController_readOne
@@ -373,9 +415,11 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_9
         '404':
           description: Album not found.
-      tags: *ref_3
+      tags: *ref_10
+      security: *ref_11
     put:
       operationId: AlbumController_updateOne
       summary: Update album information.
@@ -401,9 +445,11 @@ paths:
                 $ref: '#/components/schemas/Album'
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_9
         '404':
           description: Album not found.
-      tags: *ref_3
+      tags: *ref_10
+      security: *ref_11
     delete:
       operationId: AlbumController_deleteOne
       summary: Delete album.
@@ -419,9 +465,11 @@ paths:
           description: The album has been deleted.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_9
         '404':
           description: Album not found.
-      tags: *ref_3
+      tags: *ref_10
+      security: *ref_11
   /favs:
     get:
       operationId: FavoritesController_readAll
@@ -435,8 +483,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Favorites'
-      tags: &ref_4
+        '401': &ref_12
+          description: Unauthorized.
+      tags: &ref_13
         - Favorites
+      security: &ref_14
+        - accessToken: []
   /favs/track/{id}:
     post:
       operationId: FavoritesController_addTrack
@@ -453,9 +505,11 @@ paths:
           description: Track added to favorites successfully.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '422':
           description: Track with id doesn't exist.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
     delete:
       operationId: FavoritesController_deleteTrack
       summary: Delete track from favorites.
@@ -471,9 +525,11 @@ paths:
           description: Track successfully deleted from favorites.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '404':
           description: Track was not found.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
   /favs/album/{id}:
     post:
       operationId: FavoritesController_addAlbum
@@ -490,9 +546,11 @@ paths:
           description: Album added to favorites successfully.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '422':
           description: Album with id doesn't exist.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
     delete:
       operationId: FavoritesController_deleteAlbum
       summary: Delete album from favorites.
@@ -508,9 +566,11 @@ paths:
           description: Album successfully deleted from favorites.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '404':
           description: Album was not found.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
   /favs/artist/{id}:
     post:
       operationId: FavoritesController_addArtist
@@ -527,9 +587,11 @@ paths:
           description: Artist added to favorites successfully.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '422':
           description: Artist with id doesn't exist.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
     delete:
       operationId: FavoritesController_deleteArtist
       summary: Delete artist from favorites.
@@ -545,9 +607,86 @@ paths:
           description: Artist successfully deleted from favorites.
         '400':
           description: Bad request. Id is invalid (not uuid).
+        '401': *ref_12
         '404':
           description: Artist was not found.
-      tags: *ref_4
+      tags: *ref_13
+      security: *ref_14
+  /auth/signup:
+    post:
+      operationId: AuthController_signup
+      summary: SignUp a new user.
+      description: SignUp a new user.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUserDto'
+      responses:
+        '201':
+          description: The user has been registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '409':
+          description: Login already exists.
+      tags: &ref_15
+        - Auth
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      summary: Authenticate user.
+      description: Authenticate user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUserDto'
+      responses:
+        '200':
+          description: User is authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginBody'
+        '400':
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '403':
+          description: Authentication failed.
+      tags: *ref_15
+  /auth/refresh:
+    post:
+      operationId: AuthController_refresh
+      summary: Refresh user tokens.
+      description: Refresh user tokens.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenDto'
+      responses:
+        '200':
+          description: User tokens refreshed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginBody'
+        '401':
+          description: 'Bad request. Error in request body. Error fields: [ ...fields ].'
+        '403':
+          description: Authentication failed.
+      tags: *ref_15
+      security:
+        - accessToken: []
 info:
   title: Node.js Home Library Service
   description: ''
@@ -556,6 +695,11 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    accessToken:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
     User:
       type: object
@@ -802,3 +946,38 @@ components:
         - artists
         - albums
         - tracks
+    AuthUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          example: TestLogin
+        password:
+          type: string
+          example: TestPassword
+      required:
+        - login
+        - password
+    LoginBody:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3OGE1ZGM5Ni1jMGVhLTQ3MzEtYmZlYi1hZjBiMTY2YjAwMGYiLCJsb2dpbiI6IlRlc3RMb2dpbiIsImlhdCI6MTY5MjY0MTQzOCwiZXhwIjoxNjkyNjQ1MDM4fQ.aVsOXbR3PVAIgjE5BuMZ0O7HDUTg75R88lMwJtVtGyU
+        refreshToken:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3OGE1ZGM5Ni1jMGVhLTQ3MzEtYmZlYi1hZjBiMTY2YjAwMGYiLCJsb2dpbiI6IlRlc3RMb2dpbiIsImlhdCI6MTY5MjY0MTQzOCwiZXhwIjoxNjkyNzI3ODM4fQ.PoRR3ICfJa8GeawVr60NiK0WBqvkGD0VtcI6uVcJdiA
+      required:
+        - accessToken
+        - refreshToken
+    RefreshTokenDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3OGE1ZGM5Ni1jMGVhLTQ3MzEtYmZlYi1hZjBiMTY2YjAwMGYiLCJsb2dpbiI6IlRlc3RMb2dpbiIsImlhdCI6MTY5MjY0MTQzOCwiZXhwIjoxNjkyNjQ1MDM4fQ.aVsOXbR3PVAIgjE5BuMZ0O7HDUTg75R88lMwJtVtGyU
+      required:
+        - refreshToken

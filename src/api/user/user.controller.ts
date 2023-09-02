@@ -7,6 +7,9 @@ import {
   Post,
   Delete,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -18,15 +21,18 @@ import {
   SwaggerDeleteUser,
 } from './swagger/user.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { UserService } from './user.service';
 import {
   InvalidPasswordException,
   UserNotFoundException,
 } from './user.exceptions';
 import { CreateUserDto, UpdatePasswordDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('user')
+@UseGuards(AuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @SwaggerUserEndpoint()
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -34,16 +40,16 @@ export class UserController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @SwaggerGetAllUsers()
-  readAll() {
-    const { data } = this.userService.readAll();
+  async readAll() {
+    const { data } = await this.userService.readAll();
     return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetUser()
-  readOne(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.userService.readOne(id);
+  async readOne(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.userService.readOne(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new UserNotFoundException();
 
@@ -53,19 +59,22 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostUser()
-  createOne(@Body() createUserDto: CreateUserDto) {
-    const { data } = this.userService.create(createUserDto);
+  async createOne(@Body() createUserDto: CreateUserDto) {
+    const { data } = await this.userService.create(createUserDto);
     return data;
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerPutUser()
-  updateOne(
+  async updateOne(
     @UUIDParam('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const { data, errorCode } = this.userService.update(id, updatePasswordDto);
+    const { data, errorCode } = await this.userService.update(
+      id,
+      updatePasswordDto,
+    );
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new UserNotFoundException();
     if (errorCode === HttpStatus.FORBIDDEN)
@@ -77,8 +86,8 @@ export class UserController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteUser()
-  deleteOne(@UUIDParam('id') id: string) {
-    const { errorCode } = this.userService.delete(id);
+  async deleteOne(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.userService.delete(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new UserNotFoundException();
   }

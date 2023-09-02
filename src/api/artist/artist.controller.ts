@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -18,28 +19,30 @@ import {
   SwaggerPutArtist,
 } from './swagger/artist.swagger';
 
-import { UUIDParam } from 'src/utils/id';
+import { UUIDParam } from 'src/libs/id';
 import { ArtistService } from './artist.service';
 import { ArtistNotFoundException } from './artist.exceptions';
 import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { AuthGuard } from '../auth/auth.guard';
 
-@SwaggerArtistEndpoint()
 @Controller('artist')
+@UseGuards(AuthGuard)
+@SwaggerArtistEndpoint()
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
   @SwaggerGetAllArtists()
-  readAll() {
-    const { data } = this.artistService.readAll();
+  async readAll() {
+    const { data } = await this.artistService.readAll();
     return data;
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerGetArtist()
-  readOne(@UUIDParam('id') id: string) {
-    const { data, errorCode } = this.artistService.readOne(id);
+  async readOne(@UUIDParam('id') id: string) {
+    const { data, errorCode } = await this.artistService.readOne(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
 
@@ -49,19 +52,22 @@ export class ArtistController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @SwaggerPostArtist()
-  createOne(@Body() createArtistDto: CreateArtistDto) {
-    const { data } = this.artistService.create(createArtistDto);
+  async createOne(@Body() createArtistDto: CreateArtistDto) {
+    const { data } = await this.artistService.create(createArtistDto);
     return data;
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @SwaggerPutArtist()
-  updateOne(
+  async updateOne(
     @UUIDParam('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const { data, errorCode } = this.artistService.update(id, updateArtistDto);
+    const { data, errorCode } = await this.artistService.update(
+      id,
+      updateArtistDto,
+    );
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
 
@@ -71,8 +77,8 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteArtist()
-  deleteOne(@UUIDParam('id') id: string) {
-    const { errorCode } = this.artistService.delete(id);
+  async deleteOne(@UUIDParam('id') id: string) {
+    const { errorCode } = await this.artistService.delete(id);
 
     if (errorCode === HttpStatus.NOT_FOUND) throw new ArtistNotFoundException();
   }

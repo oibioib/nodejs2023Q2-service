@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 
-import { DbModule } from 'src/db/db.module';
 import { FavoritesController } from './favorites.controller';
 import { FavoritesService } from './favorites.service';
+import { ArtistModule } from '../artist/artist.module';
+import { TrackModule } from '../track/track.module';
+import { AlbumModule } from '../album/album.module';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
-  imports: [DbModule],
+  imports: [ArtistModule, TrackModule, AlbumModule, TokenModule],
   controllers: [FavoritesController],
   providers: [FavoritesService],
 })

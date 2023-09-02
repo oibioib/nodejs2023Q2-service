@@ -1,24 +1,41 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './api/user/user.module';
 import { ArtistModule } from './api/artist/artist.module';
 import { TrackModule } from './api/track/track.module';
 import { AlbumModule } from './api/album/album.module';
 import { FavoritesModule } from './api/favorites/favorites.module';
+import { AuthModule } from './api/auth/auth.module';
+
+import { LoggingMiddleware } from './logging/logging.middleware';
+import { LoggingModule } from './logging/logging.module';
+
+import AppExceptionsFilter from './exception/exception.filter';
+
+import { dataSourceConfig } from './config/data-source.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot(dataSourceConfig),
     UserModule,
     ArtistModule,
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    AuthModule,
+    LoggingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppExceptionsFilter],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}

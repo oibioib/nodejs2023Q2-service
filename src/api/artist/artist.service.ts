@@ -1,29 +1,145 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { DbService } from 'src/db/db.service';
+import { ServiceResponse } from 'src/libs/service-response';
 import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DbService) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) {}
 
-  readAll() {
-    return this.db.artistGetAll();
+  async readAll() {
+    const serviceResponse = new ServiceResponse<Artist[]>();
+    const artists = await this.artistRepository.find();
+    serviceResponse.data = artists;
+
+    return serviceResponse;
   }
 
-  readOne(id: string) {
-    return this.db.artistGetOne(id);
+  async readOne(id: string) {
+    const serviceResponse = new ServiceResponse<Artist>();
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
+    }
+
+    serviceResponse.data = existingArtist;
+
+    return serviceResponse;
   }
 
-  create(createArtistDto: CreateArtistDto) {
-    return this.db.artistCreate(createArtistDto);
+  async create(createArtistDto: CreateArtistDto) {
+    const serviceResponse = new ServiceResponse<Artist>();
+    const artistWithDto = this.artistRepository.create(createArtistDto);
+    const newArtist = await this.artistRepository.save(artistWithDto);
+    serviceResponse.data = newArtist;
+
+    return serviceResponse;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    return this.db.artistUpdate(id, updateArtistDto);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const serviceResponse = new ServiceResponse<Artist>();
+
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+      return serviceResponse;
+    }
+
+    const artistWithNewData = {
+      ...existingArtist,
+      ...updateArtistDto,
+    };
+
+    const artist = await this.artistRepository.save(artistWithNewData);
+    serviceResponse.data = artist;
+
+    return serviceResponse;
   }
 
-  delete(id: string) {
-    return this.db.artistDelete(id);
+  async delete(id: string) {
+    const serviceResponse = new ServiceResponse();
+
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      serviceResponse.errorCode = HttpStatus.NOT_FOUND;
+    }
+
+    if (existingArtist) {
+      await this.artistRepository.remove(existingArtist);
+    }
+
+    return serviceResponse;
+  }
+
+  async getFavoriteArtists() {
+    const favoriteArtists = await this.artistRepository.find({
+      where: { favorite: true },
+    });
+
+    return favoriteArtists;
+  }
+
+  async addArtistToFavorites(id: string) {
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      return null;
+    }
+
+    const track = {
+      ...existingArtist,
+      favorite: true,
+    };
+
+    await this.artistRepository.save(track);
+
+    return id;
+  }
+
+  async deleteArtistFromFavorites(id: string) {
+    const existingArtist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingArtist) {
+      return null;
+    }
+
+    const track = {
+      ...existingArtist,
+      favorite: false,
+    };
+
+    await this.artistRepository.save(track);
+
+    return id;
   }
 }

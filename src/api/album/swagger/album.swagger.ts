@@ -1,17 +1,23 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Album } from '../entities/album.entity';
 
 export const SwaggerAlbumEndpoint = () => {
-  return applyDecorators(ApiTags('Album'));
+  return applyDecorators(
+    ApiTags('Album'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllAlbums = () => {
@@ -58,7 +64,7 @@ export const SwaggerPostAlbum = () => {
     }),
     ApiBadRequestResponse({
       description:
-        'Bad request. Body does not contain required fields: [ ...fields ].',
+        'Bad request. Error in request body. Error fields: [ ...fields ].',
     }),
   );
 };

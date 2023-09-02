@@ -1,17 +1,23 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Track } from '../entities/track.entity';
 
 export const SwaggerTrackEndpoint = () => {
-  return applyDecorators(ApiTags('Track'));
+  return applyDecorators(
+    ApiTags('Track'),
+    ApiBearerAuth('accessToken'),
+    ApiUnauthorizedResponse({ description: 'Unauthorized.' }),
+  );
 };
 
 export const SwaggerGetAllTracks = () => {
@@ -58,7 +64,7 @@ export const SwaggerPostTrack = () => {
     }),
     ApiBadRequestResponse({
       description:
-        'Bad request. Body does not contain required fields: [ ...fields ].',
+        'Bad request. Error in request body. Error fields: [ ...fields ].',
     }),
   );
 };

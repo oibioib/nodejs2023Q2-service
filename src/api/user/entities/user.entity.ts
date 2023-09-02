@@ -1,6 +1,16 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Exclude, Transform } from 'class-transformer';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
+@Entity()
 export class User {
+  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: 'string',
     format: 'uuid',
@@ -8,30 +18,42 @@ export class User {
   })
   id: string;
 
+  @Column()
   @ApiProperty({
     type: 'string',
     example: 'TestUser',
   })
   login: string;
 
+  @Column()
   @ApiHideProperty()
+  @Exclude()
   password: string;
 
+  @Column()
   @ApiProperty({
     type: 'number',
     example: 1,
   })
   version: number;
 
+  @CreateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime(), {
+    toPlainOnly: true,
+  })
   @ApiProperty({
     type: 'number',
     example: 1655000000,
   })
-  createdAt: string;
+  createdAt: Date;
 
+  @UpdateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime(), {
+    toPlainOnly: true,
+  })
   @ApiProperty({
     type: 'number',
     example: 1655000000,
   })
-  updatedAt: string;
+  updatedAt: Date;
 }

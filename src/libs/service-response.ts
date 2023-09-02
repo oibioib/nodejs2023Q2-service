@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
-export class DBResponse<T> {
+export class ServiceResponse<T> {
   constructor() {
     this.data = undefined;
     this.errorCode = null;
